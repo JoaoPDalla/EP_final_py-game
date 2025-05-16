@@ -1,0 +1,3 @@
+WIDTH = 480
+HEIGHT = 600
+fps = 30
