@@ -1,64 +1,84 @@
 import pygame
-from constantes import HEIGHT,WIDTH
+from constantes import *
 from imagens import assets
+import math
 
 pygame.init()
 pygame.mixer.init()
 
 #Grupos da classe sem organização necessária
-groups = pygame.sprite.Group
-all_power1 = pygame.sprite.Group
-all_power2 = pygame.sprite.Group
-all_power3 = pygame.sprite.Group
-groups['all_power1'] = all_power1
-groups['all_power2'] = all_power2
-groups['all_power3'] = all_power3
+#Tirei depois fazer :0
 
 #Corpo do personagem
-class Mago:
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self) 
-        self.image = assets['personagem']
-        self.rect = self.image.get_rect()
-        self.rect.bottom = HEIGHT-10
-        self.rect.centerx = WIDTH/2
-        self.speedx = 0
-        self.speedy = 0
+class Mago(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((40, 60))
+        self.image.fill(AZUL)
+        self.rect = self.image.get_rect(center=(x, y))
+        self.vel = 5
+        self.ultimo_ataque = 0
+        self.ultimo_area = 0
 
-        # self.last_shot =pygame.time.get_ticks
-        # self.shoot_tickets = 500
+    def mover(self, teclas):
+        if teclas[pygame.K_w]:
+            self.rect.y -= self.vel
+        if teclas[pygame.K_s]:
+            self.rect.y += self.vel
+        if teclas[pygame.K_a]:
+            self.rect.x -= self.vel
+        if teclas[pygame.K_d]:
+            self.rect.x += self.vel
+
+        # Limita o movimento à tela
+        self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
+
+    def atacar(self, tipo, alvo):
+        agora = pygame.time.get_ticks()
+        if agora - self.ultimo_ataque >= COOLDOWN_MS:
+            self.ultimo_ataque = agora
+            cores = [VERMELHO, VERDE, AMARELO, BRANCO]
+            return Projetil(self.rect.centerx, self.rect.centery, alvo, cores[tipo])
+        return None
+
+    def especial(self):
+        agora = pygame.time.get_ticks()
+        if agora - self.ultimo_area >= COOLDOWN_MS_Ataque_area:
+            self.ultimo_area = agora
+            return Especial(self)
+        return None
+#classes dos poderes sem nenhuma aprofundação ainda
+class Projetil(pygame.sprite.Sprite):
+    def __init__(self, x, y, alvo, cor):
+        super().__init__()
+        self.image = pygame.Surface((10, 10))
+        self.image.fill(cor)
+        self.rect = self.image.get_rect(center=(x, y))
+
+        dx, dy = alvo[0] - x, alvo[1] - y
+        dist = math.hypot(dx, dy)
+        self.vel = 10
+        self.vx = dx / dist * self.vel
+        self.vy = dy / dist * self.vel
 
     def update(self):
-        self.rect.x += self.speedx
-        self.rect.y += self.speedy
+        self.rect.x += self.vx
+        self.rect.y += self.vy
+        if (self.rect.right < 0 or self.rect.left > WIDTH or
+                self.rect.bottom < 0 or self.rect.top > HEIGHT):
+            self.kill()
 
-        # Mantem dentro da tela
-        if self.rect.right > WIDTH:
-            self.rect.right = WIDTH
-        if self.rect.left < 0:
-            self.rect.left = 0
-    def power1(self):
-        #temporariamente emcima do personagem
-        new_power1 = power1(self.assets, self.rect.top, self.rect.centerx)
-        self.groups['all_sprites'].add(new_power1)
-        self.groups['all_power1'].add(new_power1)
-    def power2(self):
-        #temporariamente emcima do personagem
-        new_power2 = power2(self.assets, self.rect.top, self.rect.centerx)
-        self.groups['all_sprites'].add(new_power2)
-        self.groups['all_power2'].add(new_power2)
-    def power3(self):
-        #temporariamente emcima do personagem
-        new_power3 = power3(self.assets, self.rect.top, self.rect.centerx)
-        self.groups['all_sprites'].add(new_power3)
-        self.groups['all_power3'].add(new_power3)
-#classes dos poderes sem nenhuma aprofundação ainda
-class power1:
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-class power2:
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-class power3:
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
+# Classe para ataque em área
+class Especial(pygame.sprite.Sprite):
+    def __init__(self, mago):
+        super().__init__()
+        self.image = pygame.Surface((150, 150), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, (160, 32, 240, 100), (75, 75), 75)
+        self.rect = self.image.get_rect(center=mago.rect.center)
+        self.mago = mago
+        self.tempo_criacao = pygame.time.get_ticks()
+
+    def update(self):
+        self.rect.center = self.mago.rect.center
+        if pygame.time.get_ticks() - self.tempo_criacao > 300:
+            self.kill()

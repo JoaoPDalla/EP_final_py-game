@@ -9,4 +9,4 @@ window.fill((0, 0, 0))  # Preenche com a cor branca
 
 
 assets = {}
-assets['personagem'] = pygame.image.load('assets/img/').convert
+#assets['personagem'] = pygame.image.load('assets/img/').convert
