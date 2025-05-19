@@ -91,8 +91,8 @@ class inimigo(pygame.sprite.Sprite):
         self.image =pygame.Surface((40,60))
         self.image.fill(VERMELHO)
         self.rect = self.image.get_rect(center=(x, y))
-        self.vel=8
-        self.attack_range=800
+        self.vel=2
+        self.attack_range=400
 
     def update(self,mago):
         dx=mago.rect.centerx-self.rect.centerx
@@ -102,9 +102,9 @@ class inimigo(pygame.sprite.Sprite):
             self.rect.x += self.vel * math.cos(angulo)
             self.rect.y += self.vel * math.sin(angulo)
         else:
-            var_x=random.randint(-1,1)
-            var_y=random.randint(-1,1)
+            var_x=random.randint(-5,5)
+            var_y=random.randint(-5,5)
             self.rect.x+=self.vel*var_x
             self.rect.y+=self.vel*var_y
-            
+
         self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
