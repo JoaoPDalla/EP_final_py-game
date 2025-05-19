@@ -1,5 +1,7 @@
-WIDTH = 480
-HEIGHT = 600
+import pygame
+info = pygame.display.Info()
+WIDTH = info.current_w
+HEIGHT = info.current_h
 FPS = 60
 COOLDOWN_MS = 500
 COOLDOWN_MS_Ataque_area = 1500

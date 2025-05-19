@@ -1,6 +1,7 @@
+# ===== Inicialização =====
+# ----- Importa e inicia pacotes
 import pygame
 from constantes import *
-from imagens import assets
 import math
 
 pygame.init()
@@ -13,9 +14,9 @@ pygame.mixer.init()
 class Mago(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.Surface((40, 60))
+        self.image = pygame.Surface((40,60))
         self.image.fill(AZUL)
-        self.rect = self.image.get_rect(center=(x, y))
+        self.rect = self.image.get_rect(topleft=(x, y))
         self.vel = 5
         self.ultimo_ataque = 0
         self.ultimo_area = 0
