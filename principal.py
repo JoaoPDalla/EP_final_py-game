@@ -23,10 +23,12 @@ assets = load_assets()
 tempo_apresentacao = pygame.time.get_ticks() # contador da Cutscene inicial
 relogio = pygame.time.Clock()
 mago = Mago(WIDTH//2, HEIGHT//2)
+enemy= inimigo(WIDTH//2, HEIGHT//2)
 inim_longo = longo_alcance(100,100)
 todos_sprites = pygame.sprite.Group(mago)
 projeteis = pygame.sprite.Group()
 inimigos = pygame.sprite.Group(inim_longo)
+enemys = pygame.sprite.Group(enemy)
 # ===== Loop principal =====
 while estado != DONE:
     relogio.tick(FPS)
@@ -101,12 +103,15 @@ while estado != DONE:
     elif estado == TUTORIAL:
         teclas = pygame.key.get_pressed()
         mago.mover(teclas)
+        enemy.update(mago)
+        enemys.draw(TELA)
         todos_sprites.update()
         inimigos.update(mago,projeteis,todos_sprites)
         todos_sprites.draw(TELA)
-        inimigos.draw(TELA)
         
+        inimigos.draw(TELA)
 
+    
     
     pygame.display.update()
     pygame.display.flip()

@@ -1,6 +1,7 @@
 # ===== Inicialização =====
 # ----- Importa e inicia pacotes
 import pygame
+import random
 from constantes import *
 import math
 import random
@@ -84,6 +85,30 @@ class Especial(pygame.sprite.Sprite):
         self.rect.center = self.mago.rect.center
         if pygame.time.get_ticks() - self.tempo_criacao > 300:
             self.kill()
+
+class inimigo(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        super().__init__()
+        self.image =pygame.Surface((40,60))
+        self.image.fill(VERMELHO)
+        self.rect = self.image.get_rect(center=(x, y))
+        self.vel=2
+        self.attack_range=400
+
+    def update(self,mago):
+        dx=mago.rect.centerx-self.rect.centerx
+        dy=mago.rect.centery-self.rect.centery
+        if math.hypot(dx,dy)<=self.attack_range:
+            angulo = math.atan2(dy, dx)
+            self.rect.x += self.vel * math.cos(angulo)
+            self.rect.y += self.vel * math.sin(angulo)
+        else:
+            var_x=random.randint(-5,5)
+            var_y=random.randint(-5,5)
+            self.rect.x+=self.vel*var_x
+            self.rect.y+=self.vel*var_y
+
+        self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
 class longo_alcance(pygame.sprite.Sprite):
     def __init__(self,x,y):
         super().__init__()
@@ -127,4 +152,3 @@ class longo_alcance(pygame.sprite.Sprite):
             self.rect.y += self.dir_y
         #limite da tela
         self.rect.clamp_ip(pygame.Rect(0,0,WIDTH,HEIGHT))
-            
