@@ -5,9 +5,7 @@ pygame.init()
 pygame.mixer.init()  # Inicializa especificamente o módulo de áudio
 from constantes import *
 from classes import *
-from assets import load_assets, INICIO
-
-assets = load_assets()
+from assets import *
 
 # ----- Gera tela principal
 TELA = pygame.display.set_mode((WIDTH, HEIGHT))  # Modo fullscreen
@@ -19,6 +17,8 @@ APRESENTACAO = 2
 TUTORIAL = 3
 MORRENDO = 4
 estado = TELA_INICIAL  # Define estado inicial do jogo
+
+assets = load_assets()
 
 tempo_apresentacao = pygame.time.get_ticks() # contador da Cutscene inicial
 relogio = pygame.time.Clock()
@@ -35,6 +35,7 @@ while estado != DONE:
         # Só verifica o teclado se está no estado de jogo
         if evento.type == pygame.QUIT:
             estado = DONE 
+        
         # Tela inicial
         if estado == TELA_INICIAL:
             if evento.type == pygame.KEYDOWN:
@@ -43,14 +44,17 @@ while estado != DONE:
                 else:
                     # Qualquer tecla inicia o jogo
                     estado = APRESENTACAO    
+        
         # Cutscene inicial            
         elif estado == APRESENTACAO:
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_ESCAPE:
                     estado = DONE
-                else:
+                elif evento.key == pygame.K_RETURN:
                     # Qualquer tecla inicia o jogo
                     estado = TUTORIAL
+        
+        # Tutorial
         elif estado == TUTORIAL:
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button in [1, 3]:  
@@ -71,17 +75,37 @@ while estado != DONE:
                         todos_sprites.add(area)
 
     # ----- Atualiza estado do jogo
+    
     # Atualização da tela inicial
+    TELA.fill((0, 0, 0))
     if estado == TELA_INICIAL:
         TELA.blit(assets[INICIO], (0, 0))
 
-    teclas = pygame.key.get_pressed()
-    mago.mover(teclas)
+     # Cutscene inicial
+    elif estado == APRESENTACAO:
+        TELA.blit(assets[VILA], (0, 0))
+        
+        # Verifica o tempo para mudar a imagem
+        if pygame.time.get_ticks() - tempo_apresentacao > 5000:  # 30000 ms = 30 segundos
+            estado = "img2"
+    elif estado == "img2":
+        TELA.blit(assets[VILA_DRAGAO], (0, 0))
+        if pygame.time.get_ticks() - tempo_apresentacao > 10000:
+            estado = "img3"
+    elif estado == "img3":
+        TELA.blit(assets[VILA_DESTRUIDA], (0, 0))
+        if pygame.time.get_ticks() - tempo_apresentacao > 15000:
+            estado=TUTORIAL
 
-    todos_sprites.update()
+    elif estado == TUTORIAL:
+        teclas = pygame.key.get_pressed()
+        mago.mover(teclas)
+        todos_sprites.update()
+        todos_sprites.draw(TELA)
+        
 
-    TELA.fill((0, 0, 0))
-    todos_sprites.draw(TELA)
+    
+    pygame.display.update()
     pygame.display.flip()
-
-pygame.quit()
+# ===== Finalização =====
+pygame.quit() # Função do PyGame que finaliza os recursos utilizados
