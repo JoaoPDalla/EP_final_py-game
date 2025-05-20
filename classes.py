@@ -93,20 +93,29 @@ class inimigo(pygame.sprite.Sprite):
         self.image.fill(VERMELHO)
         self.rect = self.image.get_rect(center=(x, y))
         self.vel=2
-        self.attack_range=400
+        self.aggro_range=500
+        self.cooldown_movimento=100
+        self.v_ocioso=0.4
+        self.var_x=random.choice([-(self.v_ocioso),-(self.v_ocioso),0,self.v_ocioso,self.v_ocioso])
+        self.var_y=random.choice([-(self.v_ocioso),-(self.v_ocioso),0,self.v_ocioso,self.v_ocioso])
 
     def update(self,mago):
         dx=mago.rect.centerx-self.rect.centerx
         dy=mago.rect.centery-self.rect.centery
-        if math.hypot(dx,dy)<=self.attack_range:
+        if math.hypot(dx,dy)<=self.aggro_range:
             angulo = math.atan2(dy, dx)
             self.rect.x += self.vel * math.cos(angulo)
             self.rect.y += self.vel * math.sin(angulo)
-        else:
-            var_x=random.randint(-5,5)
-            var_y=random.randint(-5,5)
-            self.rect.x+=self.vel*var_x
-            self.rect.y+=self.vel*var_y
+        else:   
+            if self.cooldown_movimento>0:
+                self.rect.x+=self.vel*self.var_x
+                self.rect.y+=self.vel*self.var_y
+                self.cooldown_movimento-=1
+            else:
+                self.var_x=random.choice([-(self.v_ocioso),-(self.v_ocioso),0,self.v_ocioso,self.v_ocioso])
+                self.var_y=random.choice([-(self.v_ocioso),-(self.v_ocioso),0,self.v_ocioso,self.v_ocioso])
+                self.cooldown_movimento=100
+
 
         self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
 class longo_alcance(pygame.sprite.Sprite):
