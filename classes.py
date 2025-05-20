@@ -126,7 +126,7 @@ class longo_alcance(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.range_ataque = 600
         self.range_perseguicao = 900
-        self.random_move_timer = 0
+        self.timer_movimento_aleatorio = 0
         self.vel = 2
         self.dir_x = random.choice([-1, 0, 1])
         self.dir_y = random.choice([-1, 0, 1])
@@ -152,12 +152,76 @@ class longo_alcance(pygame.sprite.Sprite):
             self.rect.y += self.vel * math.sin(anglo)
         #caso fora dos dois range faz movimentos aleatorios
         else:
-            self.random_move_timer -=1
-            if self.random_move_timer <= 0:
+            self.timer_movimento_aleatorio -=1
+            if self.timer_movimento_aleatorio <= 0:
                 self.dir_x = random.choice([-1,0,1])
                 self.dir_y = random.choice([-1,0,1])
-                self.random_move_timer = random.randint(30,60)
+                self.timer_movimento_aleatorio = random.randint(30,60)
             self.rect.x += self.dir_x
             self.rect.y += self.dir_y
         #limite da tela
         self.rect.clamp_ip(pygame.Rect(0,0,WIDTH,HEIGHT))
+class ProjetilFogo(pygame.sprite.Sprite):
+    def __init__(self, x, y, angulo):
+        super().__init__()
+        self.image = pygame.Surface((20, 10))
+        self.image.fill((255, 100, 0))
+        self.rect = self.image.get_rect(center=(x, y))
+        self.vel = 6
+        self.vx = self.vel * math.cos(angulo)
+        self.vy = self.vel * math.sin(angulo)
+
+    def update(self):
+        self.rect.x += self.vx
+        self.rect.y += self.vy
+        if (self.rect.right < 0 or self.rect.left > WIDTH or
+            self.rect.bottom < 0 or self.rect.top > HEIGHT):
+            self.kill()
+class DragaoInimigo(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((50, 50))
+        self.image.fill((255, 0, 100))  # Rosa avermelhado pro dragão
+        self.rect = self.image.get_rect(center=(x, y))
+        self.range_ataque = 500
+        self.range_perseguicao = 800
+        self.vel = 1.5
+        self.movimento_aleatorio = 0
+        self.dir_x = random.choice([-1, 0, 1])
+        self.dir_y = random.choice([-1, 0, 1])
+        self.ultimo_ataque = 0
+
+    def update(self, mago, projeteis, todos_sprites):
+        dx = mago.rect.centerx - self.rect.centerx
+        dy = mago.rect.centery - self.rect.centery
+        distancia = math.hypot(dx, dy)
+
+        if distancia <= self.range_ataque:
+            agora = pygame.time.get_ticks()
+            if agora - self.ultimo_ataque >= cooldown_dragao:
+                self.ultimo_ataque = agora
+                # ângulo em direção ao mago
+                angulo_central = math.atan2(dy, dx)
+                # Cone de abertura (em radianos) — por ex: 60 graus = pi/3
+                abertura_cone = math.radians(60)
+                num_projeteis = 7
+                for i in range(num_projeteis):
+                    offset = (i - (num_projeteis - 1) / 2) / (num_projeteis - 1)
+                    angulo = angulo_central + offset * abertura_cone
+                    proj = ProjetilFogo(self.rect.centerx, self.rect.centery, angulo)
+                    projeteis.add(proj)
+                    todos_sprites.add(proj)
+        elif distancia <= self.range_perseguicao:
+            angulo = math.atan2(dy, dx)
+            self.rect.x += self.vel * math.cos(angulo)
+            self.rect.y += self.vel * math.sin(angulo)
+        else:
+            self.movimento_aleatorio -= 1
+            if self.movimento_aleatorio <= 0:
+                self.dir_x = random.choice([-1, 0, 1])
+                self.dir_y = random.choice([-1, 0, 1])
+                self.movimento_aleatorio = random.randint(30, 60)
+            self.rect.x += self.dir_x * self.vel
+            self.rect.y += self.dir_y * self.vel
+
+        self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
