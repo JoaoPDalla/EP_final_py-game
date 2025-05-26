@@ -17,7 +17,15 @@ class Mago(pygame.sprite.Sprite):
         self.vel = 5
         self.ultimo_ataque = 0
         self.ultimo_area = 0
-
+        self.escudo = False
+    def verifica_escudo(self):
+        if self.escudo == True:
+            agora = pygame.time.get_ticks()
+            if agora - self.ultimo_area > duracao_escudo:
+                self.escudo = False
+                return self.escudo
+            return self.escudo
+        return self.escudo
     def mover(self, teclas):
         if teclas[pygame.K_w]:
             self.rect.y -= self.vel
@@ -56,8 +64,23 @@ class Mago(pygame.sprite.Sprite):
         agora = pygame.time.get_ticks()
         if agora - self.ultimo_area >= cooldown_especial:
             self.ultimo_area = agora
+            self.escudo = True
             return Especial(self)
         return None
+class Especial(pygame.sprite.Sprite):
+    def __init__(self, mago):
+        super().__init__()
+        self.image = pygame.Surface((150, 150), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, (160, 32, 240, 100), (75, 75), 75)
+        self.rect = self.image.get_rect(center=mago.rect.center)
+        self.mago = mago
+        self.tempo_criacao = pygame.time.get_ticks()
+
+    def update(self):
+        self.rect.center = self.mago.rect.center
+        if pygame.time.get_ticks() - self.tempo_criacao > duracao_escudo:
+            self.kill()
+
 
 # Classe Projetil
 class Projetil(pygame.sprite.Sprite):

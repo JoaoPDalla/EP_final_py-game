@@ -27,9 +27,11 @@ enemy = inimigo(WIDTH // 2, HEIGHT // 2)
 inim_longo = longo_alcance(100, 100)
 dragao = DragaoInimigo(300, 300)
 todos_sprites = pygame.sprite.Group(mago)
+projeteis_mago = pygame.sprite.Group()
 projeteis = pygame.sprite.Group()
 inimigos = pygame.sprite.Group(inim_longo, dragao)
 enemys = pygame.sprite.Group(enemy)
+esculdito = pygame.sprite.Group()
 # ===== Loop principal =====
 while estado != DONE:
     relogio.tick(FPS)
@@ -59,17 +61,18 @@ while estado != DONE:
                     proj = mago.atacar(tipo, pygame.mouse.get_pos())
                     if proj:
                         todos_sprites.add(proj)
-                        projeteis.add(proj)
+                        projeteis_mago.add(proj)
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_SPACE:
                     proj = mago.atacar(3, pygame.mouse.get_pos())
                     if proj:
                         todos_sprites.add(proj)
-                        projeteis.add(proj)
+                        projeteis_mago.add(proj)
                 if evento.key == pygame.K_c:
                     area = mago.especial()
                     if area:
                         todos_sprites.add(area)
+                        esculdito.add(area)
                         
     # ----- Atualiza estado do jogo
     TELA.fill((0, 0, 0))
@@ -100,17 +103,24 @@ while estado != DONE:
             inimiga.update(mago, projeteis, todos_sprites)
         todos_sprites.draw(TELA)
         inimigos.draw(TELA)
+        # Verifica colisão entre o escudo
+        if mago.verifica_escudo() == True:
+            for escudo in esculdito:
+                projeteis_bloqueados = pygame.sprite.spritecollide(escudo,projeteis,True)
         # Verifica colisão entre mago e projéteis
         dano_mago = pygame.sprite.spritecollide(mago, projeteis, True)
-        if len(dano_mago) > 0:
+        if len(dano_mago) > 0 and mago.verifica_escudo() == False:
             barradevida -= 1
         # Verifica colisão corpo a corpo entre mago e inimigos
         colisao_com_inimigos = pygame.sprite.spritecollide(mago, inimigos, False)
         colisao_com_enemys = pygame.sprite.spritecollide(mago, enemys, False)
-        if len(colisao_com_inimigos) > 0 or len(colisao_com_enemys) > 0:
-            barradevida -= 1  # Reduz vida do mago
+        if len(colisao_com_inimigos) > 0 or len(colisao_com_enemys) > 0 and mago.verifica_escudo() == False:
+            now = pygame.time.get_ticks()
+            if now - ultimo_ataque_perto > cooldown_ataque_perto:
+                ultimo_ataque_perto = pygame.time.get_ticks()
+                barradevida -= 1  # Reduz vida do mago
         # Verifica colisão entre projéteis e inimigos
-        for proj in projeteis:
+        for proj in projeteis_mago:
             inimigos_atacados = pygame.sprite.spritecollide(proj, inimigos, False)
             for inimigo in inimigos_atacados:
                 inimigo.levar_dano(1)  # Aplica 1 de dano
