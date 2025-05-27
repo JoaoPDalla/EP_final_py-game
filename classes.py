@@ -3,40 +3,66 @@
 import pygame
 import math
 import random
+from assets import *
 from constantes import *
+
 pygame.init()
 pygame.mixer.init()
 
 # Classe do Mago
 class Mago(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, assets):
         super().__init__()
-        self.image = pygame.Surface((40, 60))
-        self.image.fill(AZUL)
+
+        self.sprites = assets[RBE_ANM]  # Lista com as imagens de animação
+        self.frame = 0
+        self.image = self.sprites[self.frame]  # Começa com a primeira imagem
         self.rect = self.image.get_rect(topleft=(x, y))
+
         self.vel = 8
         self.ultimo_ataque = 0
         self.ultimo_area = 0
         self.escudo = False
+
+        self.animation_timer = 0
+        self.animation_speed = 100  # milissegundos entre troca de sprite
+
     def verifica_escudo(self):
-        if self.escudo == True:
+        if self.escudo:
             agora = pygame.time.get_ticks()
             if agora - self.ultimo_area > duracao_escudo:
                 self.escudo = False
                 return self.escudo
             return self.escudo
         return self.escudo
-    def mover(self, teclas):
+
+    def mover(self, teclas, dt):
+        moving = False
         if teclas[pygame.K_w]:
             self.rect.y -= self.vel
+            moving = True
         if teclas[pygame.K_s]:
             self.rect.y += self.vel
+            moving = True
         if teclas[pygame.K_a]:
             self.rect.x -= self.vel
+            moving = True
         if teclas[pygame.K_d]:
             self.rect.x += self.vel
-        # Limita o movimento à tela
+            moving = True
+
         self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
+
+        # Atualiza a animação só se estiver se movendo
+        if moving:
+            self.animation_timer += dt
+            if self.animation_timer >= self.animation_speed:
+                self.animation_timer = 0
+                self.frame = (self.frame + 1) % len(self.sprites)
+                self.image = self.sprites[self.frame]
+        else:
+            self.frame = 0
+            self.image = self.sprites[self.frame]
 
     def atacar(self, tipo, alvo):
         agora = pygame.time.get_ticks()
@@ -44,12 +70,11 @@ class Mago(pygame.sprite.Sprite):
             self.ultimo_ataque = agora
             cores = [VERMELHO, VERDE, AMARELO, BRANCO]
 
-            # Deslocamento para que o tiro não saia dentro do mago
             dx, dy = alvo[0] - self.rect.centerx, alvo[1] - self.rect.centery
             dist = math.hypot(dx, dy)
             if dist == 0:
-                dist = 1  # Evita divisão por zero
-            offset_x = (dx / dist) * 50  # Ajuste 20 pixels de deslocamento inicial
+                dist = 1
+            offset_x = (dx / dist) * 50
             offset_y = (dy / dist) * 50
 
             return Projetil(
@@ -67,19 +92,7 @@ class Mago(pygame.sprite.Sprite):
             self.escudo = True
             return Especial(self)
         return None
-class Especial(pygame.sprite.Sprite):
-    def __init__(self, mago):
-        super().__init__()
-        self.image = pygame.Surface((150, 150), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, (160, 32, 240, 100), (75, 75), 75)
-        self.rect = self.image.get_rect(center=mago.rect.center)
-        self.mago = mago
-        self.tempo_criacao = pygame.time.get_ticks()
 
-    def update(self):
-        self.rect.center = self.mago.rect.center
-        if pygame.time.get_ticks() - self.tempo_criacao > duracao_escudo:
-            self.kill()
 
 
 # Classe Projetil

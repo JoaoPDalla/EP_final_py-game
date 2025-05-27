@@ -23,7 +23,7 @@ assets = load_assets()
 VIDA_PEQUENA = pygame.transform.scale(assets[VIDA], (60, 60))  # Ajuste o tamanho se quiser
 tempo_apresentacao = pygame.time.get_ticks()  # contador da Cutscene inicial
 relogio = pygame.time.Clock()
-mago = Mago(0, HEIGHT // 2 - 30)
+mago = Mago(0, HEIGHT // 2 - 30, assets)
 dragao = DragaoInimigo(300, 300)
 todos_sprites = pygame.sprite.Group(mago)
 projeteis_mago = pygame.sprite.Group()
@@ -50,6 +50,7 @@ def reposicionar_mago(mago, posicao='esquerda'):
 # ===== Loop principal =====
 while estado != DONE:
     relogio.tick(FPS)
+    dt = 120
     # ----- Trata eventos
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
@@ -146,7 +147,7 @@ while estado != DONE:
     elif estado == TUTORIAL:
         TELA.blit(assets[BTUTORIAL], (0, 0))
         teclas = pygame.key.get_pressed()
-        mago.mover(teclas)
+        mago.mover(teclas, dt)
         for enemy in enemys:
             enemy.update(mago)
         enemys.draw(TELA)
@@ -192,7 +193,7 @@ while estado != DONE:
     elif estado == N1:
         TELA.blit(assets[BDUNGEON], (0, 0))
         teclas = pygame.key.get_pressed()
-        mago.mover(teclas)
+        mago.mover(teclas, dt)
         for enemy in enemys:
             enemy.update(mago)
         enemys.draw(TELA)
