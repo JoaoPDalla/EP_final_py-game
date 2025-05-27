@@ -11,6 +11,9 @@ cooldown_ataque_perto = 500
 ultimo_ataque_perto = 0
 duracao_escudo = 600
 
+Primeira_fase = False
+segunda_fase = False
+
 BRANCO = (255, 255, 255)
 VERMELHO = (255, 0, 0)
 AZUL = (0, 0, 255)

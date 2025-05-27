@@ -24,14 +24,12 @@ VIDA_PEQUENA = pygame.transform.scale(assets[VIDA], (60, 60))  # Ajuste o tamanh
 tempo_apresentacao = pygame.time.get_ticks()  # contador da Cutscene inicial
 relogio = pygame.time.Clock()
 mago = Mago(0, HEIGHT // 2 - 30)
-enemy = inimigo(100, 100)
-inim_longo = longo_alcance(100, 100)
 dragao = DragaoInimigo(300, 300)
 todos_sprites = pygame.sprite.Group(mago)
 projeteis_mago = pygame.sprite.Group()
 projeteis = pygame.sprite.Group()
-inimigos = pygame.sprite.Group(inim_longo, dragao)
-enemys = pygame.sprite.Group(enemy)
+inimigos = pygame.sprite.Group()
+enemys = pygame.sprite.Group()
 esculdito = pygame.sprite.Group()
 pode_mudar = False
 
@@ -72,6 +70,12 @@ while estado != DONE:
                     estado = TUTORIAL
         # Tutorial
         elif estado == TUTORIAL:
+            if Primeira_fase == False:
+                for i in range(1):
+                    inimigos.add(longo_alcance(100, 100))
+                for i in range(1):
+                    enemys.add(inimigo(100, 100))
+                Primeira_fase = True
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button in [1, 3]:
                     tipo = evento.button - 1 if evento.button == 1 else 2
@@ -91,9 +95,16 @@ while estado != DONE:
                         todos_sprites.add(area)
                         esculdito.add(area)
             if mago.rect.right >= WIDTH:
-                reposicionar_mago(mago, 'esquerda')
-                estado = N1
+                if len(inimigos) == 0 and len(enemys) == 0:
+                    reposicionar_mago(mago, 'esquerda')
+                    estado = N1
         elif estado == N1:
+            if segunda_fase == False:
+                for i in range(5):
+                    inimigos.add(longo_alcance(100, 100))
+                for i in range(2):
+                    enemys.add(inimigo(100, 100))
+                segunda_fase = True
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button in [1, 3]:
                     tipo = evento.button - 1 if evento.button == 1 else 2
@@ -136,7 +147,8 @@ while estado != DONE:
         TELA.blit(assets[BTUTORIAL], (0, 0))
         teclas = pygame.key.get_pressed()
         mago.mover(teclas)
-        enemy.update(mago)
+        for enemy in enemys:
+            enemy.update(mago)
         enemys.draw(TELA)
         todos_sprites.update()
     
@@ -163,8 +175,8 @@ while estado != DONE:
         # Verifica colisão entre projéteis e inimigos
         for proj in projeteis_mago:
             inimigos_atacados = pygame.sprite.spritecollide(proj, inimigos, False)
-            for inimigo in inimigos_atacados:
-                inimigo.levar_dano(1)  # Aplica 1 de dano
+            for inimigx in inimigos_atacados:
+                inimigx.levar_dano(1)  # Aplica 1 de dano
                 proj.kill()
             
             enemys_atacados = pygame.sprite.spritecollide(proj, enemys, False)
@@ -181,7 +193,8 @@ while estado != DONE:
         TELA.blit(assets[BDUNGEON], (0, 0))
         teclas = pygame.key.get_pressed()
         mago.mover(teclas)
-        enemy.update(mago)
+        for enemy in enemys:
+            enemy.update(mago)
         enemys.draw(TELA)
         todos_sprites.update()
 
@@ -204,8 +217,8 @@ while estado != DONE:
         # Verifica colisão entre projéteis e inimigos
         for proj in projeteis_mago:
             inimigos_atacados = pygame.sprite.spritecollide(proj, inimigos, False)
-            for inimigo in inimigos_atacados:
-                inimigo.levar_dano(1)  # Aplica 1 de dano
+            for inimige in inimigos_atacados:
+                inimige.levar_dano(1)  # Aplica 1 de dano
                 proj.kill()
             
             enemys_atacados = pygame.sprite.spritecollide(proj, enemys, False)
