@@ -189,7 +189,7 @@ while estado != DONE:
     elif estado == TUTORIAL:
         TELA.blit(assets[BTUTORIAL], (0, 0))
         teclas = pygame.key.get_pressed()
-        mago.mover(teclas)
+        mago.mover(teclas, dt)
         for enemy in enemys:
             enemy.update(mago)
         enemys.draw(TELA)
@@ -235,7 +235,7 @@ while estado != DONE:
     elif estado == N1:
         TELA.blit(assets[BDUNGEON], (0, 0))
         teclas = pygame.key.get_pressed()
-        mago.mover(teclas)
+        mago.mover(teclas, dt)
         for enemy in enemys:
             enemy.update(mago)
         enemys.draw(TELA)
