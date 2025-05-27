@@ -14,7 +14,7 @@ class Mago(pygame.sprite.Sprite):
         self.image = pygame.Surface((40, 60))
         self.image.fill(AZUL)
         self.rect = self.image.get_rect(topleft=(x, y))
-        self.vel = 5
+        self.vel = 8
         self.ultimo_ataque = 0
         self.ultimo_area = 0
         self.escudo = False
