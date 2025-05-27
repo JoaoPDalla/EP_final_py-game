@@ -49,7 +49,7 @@ def atualizar():
         global barradevida, ultimo_ataque_perto
         
         teclas = pygame.key.get_pressed()
-        mago.mover(teclas)
+        mago.mover(teclas,dt)
         for enemy in enemys:
             enemy.update(mago)
         enemys.draw(TELA)
@@ -188,91 +188,11 @@ while estado != DONE:
     
     elif estado == TUTORIAL:
         TELA.blit(assets[BTUTORIAL], (0, 0))
-        teclas = pygame.key.get_pressed()
-        mago.mover(teclas, dt)
-        for enemy in enemys:
-            enemy.update(mago)
-        enemys.draw(TELA)
-        todos_sprites.update()
-    
-        for inimiga in inimigos:
-            inimiga.update(mago, projeteis, todos_sprites)
-        todos_sprites.draw(TELA)
-        inimigos.draw(TELA)
-        # Verifica colisão entre o escudo
-        if mago.verifica_escudo() == True:
-            for escudo in esculdito:
-                projeteis_bloqueados = pygame.sprite.spritecollide(escudo,projeteis,True)
-        # Verifica colisão entre mago e projéteis
-        dano_mago = pygame.sprite.spritecollide(mago, projeteis, True)
-        if len(dano_mago) > 0 and mago.verifica_escudo() == False:
-            barradevida -= 1
-        # Verifica colisão corpo a corpo entre mago e inimigos
-        colisao_com_inimigos = pygame.sprite.spritecollide(mago, inimigos, False)
-        colisao_com_enemys = pygame.sprite.spritecollide(mago, enemys, False)
-        if len(colisao_com_inimigos) > 0 or len(colisao_com_enemys) > 0 and mago.verifica_escudo() == False:
-            now = pygame.time.get_ticks()
-            if now - ultimo_ataque_perto > cooldown_ataque_perto:
-                ultimo_ataque_perto = pygame.time.get_ticks()
-                barradevida -= 1  # Reduz vida do mago
-        # Verifica colisão entre projéteis e inimigos
-        for proj in projeteis_mago:
-            inimigos_atacados = pygame.sprite.spritecollide(proj, inimigos, False)
-            for inimigx in inimigos_atacados:
-                inimigx.levar_dano(1)  # Aplica 1 de dano
-                proj.kill()
-            
-            enemys_atacados = pygame.sprite.spritecollide(proj, enemys, False)
-            for enemy in enemys_atacados:
-                enemy.levar_dano(1)  # Aplica 1 de dano
-                proj.kill()
-        # Desenhando as vidas no canto superior esquerdo
-        for i in range(barradevida):
-            pos_x = 10 + i * (VIDA_PEQUENA.get_width() + 5)  # Espaçamento entre os corações
-            pos_y = 10  # Canto superior
-            TELA.blit(VIDA_PEQUENA, (pos_x, pos_y))
+        atualizar()
 
     elif estado == N1:
         TELA.blit(assets[BDUNGEON], (0, 0))
-        teclas = pygame.key.get_pressed()
-        mago.mover(teclas, dt)
-        for enemy in enemys:
-            enemy.update(mago)
-        enemys.draw(TELA)
-        todos_sprites.update()
-
-        for inimiga in inimigos:
-            inimiga.update(mago, projeteis, todos_sprites)
-        todos_sprites.draw(TELA)
-        inimigos.draw(TELA)
-        # Verifica colisão entre mago e projéteis
-        dano_mago = pygame.sprite.spritecollide(mago, projeteis, True)
-        if len(dano_mago) > 0 and mago.verifica_escudo() == False:
-            barradevida -= 1
-        # Verifica colisão corpo a corpo entre mago e inimigos
-        colisao_com_inimigos = pygame.sprite.spritecollide(mago, inimigos, False)
-        colisao_com_enemys = pygame.sprite.spritecollide(mago, enemys, False)
-        if len(colisao_com_inimigos) > 0 or len(colisao_com_enemys) > 0 and mago.verifica_escudo() == False:
-            now = pygame.time.get_ticks()
-            if now - ultimo_ataque_perto > cooldown_ataque_perto:
-                ultimo_ataque_perto = pygame.time.get_ticks()
-                barradevida -= 1  # Reduz vida do mago
-        # Verifica colisão entre projéteis e inimigos
-        for proj in projeteis_mago:
-            inimigos_atacados = pygame.sprite.spritecollide(proj, inimigos, False)
-            for inimige in inimigos_atacados:
-                inimige.levar_dano(1)  # Aplica 1 de dano
-                proj.kill()
-            
-            enemys_atacados = pygame.sprite.spritecollide(proj, enemys, False)
-            for enemy in enemys_atacados:
-                enemy.levar_dano(1)  # Aplica 1 de dano
-                proj.kill()
-        # Desenhando as vidas no canto superior esquerdo
-        for i in range(barradevida):
-            pos_x = 10 + i * (VIDA_PEQUENA.get_width() + 5)  # Espaçamento entre os corações
-            pos_y = 10  # Canto superior
-            TELA.blit(VIDA_PEQUENA, (pos_x, pos_y))
+        atualizar()
     
     
     # ----- Gera saídas

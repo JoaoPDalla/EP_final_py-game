@@ -92,6 +92,19 @@ class Mago(pygame.sprite.Sprite):
             self.escudo = True
             return Especial(self)
         return None
+class Especial(pygame.sprite.Sprite):
+    def __init__(self, mago):
+        super().__init__()
+        self.image = pygame.Surface((150, 150), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, (160, 32, 240, 100), (75, 75), 75)
+        self.rect = self.image.get_rect(center=mago.rect.center)
+        self.mago = mago
+        self.tempo_criacao = pygame.time.get_ticks()
+
+    def update(self):
+        self.rect.center = self.mago.rect.center
+        if pygame.time.get_ticks() - self.tempo_criacao > duracao_escudo:
+            self.kill()
 
 
 
