@@ -18,6 +18,7 @@ MORRENDO = 4
 N1 = 5
 estado = TELA_INICIAL  # Define estado inicial do jogo
 barradevida = 15
+qntd_pocoes = 0
 assets = load_assets()
 # Redimensiona o ícone de vida para pequeno
 VIDA_PEQUENA = pygame.transform.scale(assets[VIDA], (60, 60))  # Ajuste o tamanho se quiser
@@ -31,6 +32,7 @@ projeteis = pygame.sprite.Group()
 inimigos = pygame.sprite.Group()
 enemys = pygame.sprite.Group()
 esculdito = pygame.sprite.Group()
+pocs = pygame.sprite.Group()
 pode_mudar = False
 
 def reposicionar_mago(mago, posicao='esquerda'):
@@ -46,7 +48,7 @@ def reposicionar_mago(mago, posicao='esquerda'):
     elif isinstance(posicao, tuple):  # Se quiser passar coordenadas específicas
         mago.rect.topleft = posicao
 def atualizar():
-        global barradevida, ultimo_ataque_perto
+        global barradevida, ultimo_ataque_perto,qntd_pocoes
         
         teclas = pygame.key.get_pressed()
         mago.mover(teclas,dt)
@@ -59,6 +61,10 @@ def atualizar():
             inimiga.update(mago, projeteis, todos_sprites)
         todos_sprites.draw(TELA)
         inimigos.draw(TELA)
+        # Verifica colisão entre mago e poção
+        coleta_pocao = pygame.sprite.spritecollide(mago,pocs,True)
+        if len(coleta_pocao) > 0:
+            qntd_pocoes +=1
         # Verifica colisão entre mago e projéteis
         dano_mago = pygame.sprite.spritecollide(mago, projeteis, True)
         if len(dano_mago) > 0 and mago.verifica_escudo() == False:
@@ -118,6 +124,10 @@ while estado != DONE:
                     inimigos.add(longo_alcance(100, 100))
                 for i in range(1):
                     enemys.add(inimigo(100, 100))
+                for i in range(1):
+                    p = pocao_vida(500,500)
+                    pocs.add(p)
+                    todos_sprites.add(p)
                 Primeira_fase = True
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button in [1, 3]:
@@ -137,6 +147,9 @@ while estado != DONE:
                     if area:
                         todos_sprites.add(area)
                         esculdito.add(area)
+                if evento.key == pygame.K_g:
+                    qntd_pocoes -= 1
+                    barradevida +=1
             if mago.rect.right >= WIDTH:
                 if len(inimigos) == 0 and len(enemys) == 0:
                     reposicionar_mago(mago, 'esquerda')

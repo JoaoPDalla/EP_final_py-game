@@ -288,3 +288,9 @@ class DragaoInimigo(inimigo):
             self.rect.x += self.dir_x * self.vel
             self.rect.y += self.dir_y * self.vel
         self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
+class pocao_vida(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        super().__init__()
+        self.image = pygame.Surface((20,20))
+        self.image.fill((255,0,150))
+        self.rect = self.image.get_rect(center=(x, y))
