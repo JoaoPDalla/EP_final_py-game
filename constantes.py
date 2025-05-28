@@ -10,10 +10,11 @@ cooldown_dragao = 1500
 cooldown_ataque_perto = 1000
 ultimo_ataque_perto = 0
 duracao_escudo = 600
-music2_duration= 11070
+cooldown_super = 2500
+rooms=4
 Primeira_fase = False
 segunda_fase = False
-
+terceira_fase=False
 BRANCO = (255, 255, 255)
 VERMELHO = (255, 0, 0)
 AZUL = (0, 0, 255)

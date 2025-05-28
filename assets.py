@@ -17,9 +17,13 @@ BOSSA = 'Vilão atacando'
 BOSSD = 'Vilão levando dano'
 POCAO = 'Cura'
 PRJS= 'som do projétil'
+<<<<<<< HEAD
 F1 = 'Poder 1'
 F2 = 'poder 2'
 V1 = 'Vilão 1'
+=======
+INSTRUCOES = 'instrucoes'
+>>>>>>> e86160484cc989c724e18b2383cb296106e88c1e
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
     for linha in range(linhas):
@@ -61,6 +65,7 @@ def load_assets():
     assets[VIDA] = pygame.transform.scale(pygame.image.load("assets/img/ChatGPT_Image_24_de_mai._de_2025__15_00_52-removebg-preview.png"), (WIDTH, HEIGHT))
     assets[BTUTORIAL] = pygame.transform.scale(pygame.image.load("assets/img/Mapa Tutorial.png"), (WIDTH, HEIGHT))
     assets[BDUNGEON] = pygame.transform.scale(pygame.image.load("assets/img/dangeon.png"), (WIDTH, HEIGHT))
+    assets[INSTRUCOES] = pygame.transform.scale(pygame.image.load("assets/img/intrucoes.png"), (WIDTH, HEIGHT))
     assets[PRJS]=pygame.mixer.Sound("assets/sound/projectile_sound.wav")
     rbe = []
     
