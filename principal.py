@@ -15,6 +15,7 @@ TELA_INICIAL = 1  # Usar constantes para representar estados
 APRESENTACAO = 2
 TUTORIAL = 3
 MORRENDO = 4
+INSTR = 7
 N1 = 5
 N2=6
 estado = TELA_INICIAL  # Define estado inicial do jogo
@@ -121,6 +122,12 @@ while estado != DONE:
             estado = DONE
         # Tela inicial
         if estado == TELA_INICIAL:
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_ESCAPE:
+                    estado = DONE
+                else:
+                    estado = INSTR
+        elif estado == INSTR:
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_ESCAPE:
                     estado = DONE
@@ -321,18 +328,21 @@ while estado != DONE:
     TELA.fill((0, 0, 0))
     if estado == TELA_INICIAL:
         TELA.blit(assets[INICIO], (0, 0))
-    
+    elif estado == INSTR:
+        TELA.blit(assets[INSTRUCOES],(0,0))
+        if pygame.time.get_ticks() - tempo_apresentacao > 5000:
+            estado = APRESENTACAO
     elif estado == APRESENTACAO:
         TELA.blit(assets[VILA], (0, 0))
-        if pygame.time.get_ticks() - tempo_apresentacao > 5000:
+        if pygame.time.get_ticks() - tempo_apresentacao > 10000:
             estado = "img2"
     elif estado == "img2":
         TELA.blit(assets[VILA_DRAGAO], (0, 0))
-        if pygame.time.get_ticks() - tempo_apresentacao > 10000:
+        if pygame.time.get_ticks() - tempo_apresentacao > 15000:
             estado = "img3"
     elif estado == "img3":
         TELA.blit(assets[VILA_DESTRUIDA], (0, 0))
-        if pygame.time.get_ticks() - tempo_apresentacao > 15000:
+        if pygame.time.get_ticks() - tempo_apresentacao > 20000:
             estado = TUTORIAL
     
     #Atualiza os inimigos no tutorial
