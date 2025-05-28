@@ -26,6 +26,7 @@ class Mago(pygame.sprite.Sprite):
         self.ultimo_area = 0
         self.escudo = False
         self.projetil_som=pygame.mixer.Sound("assets/sound/projectile_sound.wav")
+        self.super_som=pygame.mixer.Sound("assets/sound/explosion_sound.wav")
         self.animation_timer = 0
         self.animation_speed = 100  # milissegundos entre troca de sprite
     def verifica_escudo(self):
@@ -70,7 +71,11 @@ class Mago(pygame.sprite.Sprite):
         if agora - self.ultimo_ataque >= cooldown_magia_bas:
             self.projetil_som.play()
             self.ultimo_ataque = agora
+<<<<<<< HEAD
             poderes = [assets[F1], assets[F3], assets[F2], assets[F4]]
+=======
+            poderes = [assets[F1], assets[F2], assets[F1], assets[F2]]
+>>>>>>> d6b4c8aaaadb1f329a610fa30912e1051c17aa07
 
             dx, dy = alvo[0] - self.rect.centerx, alvo[1] - self.rect.centery
             dist = math.hypot(dx, dy)
@@ -97,6 +102,7 @@ class Mago(pygame.sprite.Sprite):
     def super(self,projeteis_mago,todos_sprites,alvo):
         agora = pygame.time.get_ticks()
         if agora - self.ultimo_super >= cooldown_super:
+            self.super_som.play()
             self.ultimo_super = agora
             dx, dy = alvo[0] - self.rect.centerx, alvo[1] - self.rect.centery
             angulo_central = math.atan2(dy, dx)
@@ -112,7 +118,11 @@ class Mago(pygame.sprite.Sprite):
                 y_inicial = self.rect.centery + deslocamento * math.sin(angulo)
                 alvo_x = x_inicial + math.cos(angulo) * 100
                 alvo_y = y_inicial + math.sin(angulo) * 100
+<<<<<<< HEAD
                 proj = Projetil(x_inicial, y_inicial, (alvo_x, alvo_y), assets[F4])
+=======
+                proj = Projetil(x_inicial, y_inicial, (alvo_x, alvo_y), assets[F2])
+>>>>>>> d6b4c8aaaadb1f329a610fa30912e1051c17aa07
                 projeteis_mago.add(proj)
                 todos_sprites.add(proj)
 class Especial(pygame.sprite.Sprite):

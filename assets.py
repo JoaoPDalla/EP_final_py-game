@@ -22,8 +22,15 @@ F2 = 'poder 2'
 F3 = 'poder 3'
 F4 = 'poder 4'
 V1 = 'Vilão 1'
+<<<<<<< HEAD
 V2 = 'Vilão 2'
 INSTRUCOES = 'instrucoes'
+=======
+INSTRUCOES = 'instrucoes'
+DRINK=pygame.mixer.Sound("assets/sound/gulp_sound.wav")
+OVER = 'Over'
+MORTE_SOM=pygame.mixer.Sound("assets/sound/intro_music.mp3")
+>>>>>>> d6b4c8aaaadb1f329a610fa30912e1051c17aa07
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
     for linha in range(linhas):
@@ -66,6 +73,7 @@ def load_assets():
     assets[BTUTORIAL] = pygame.transform.scale(pygame.image.load("assets/img/Mapa Tutorial.png"), (WIDTH, HEIGHT))
     assets[BDUNGEON] = pygame.transform.scale(pygame.image.load("assets/img/dangeon.png"), (WIDTH, HEIGHT))
     assets[INSTRUCOES] = pygame.transform.scale(pygame.image.load("assets/img/intrucoes.png"), (WIDTH, HEIGHT))
+    assets[OVER] = pygame.transform.scale(pygame.image.load("assets/img/Derrota.png"), (WIDTH, HEIGHT))
     assets[PRJS]=pygame.mixer.Sound("assets/sound/projectile_sound.wav")
     rbe = []
     
