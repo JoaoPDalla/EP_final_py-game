@@ -368,6 +368,8 @@ while estado != DONE:
         atualizar()
     elif estado == Defeat:
         TELA.blit(assets[OVER],(0,0))
+        pygame.mixer.music.stop()
+        MORTE_SOM.play()
         for enemy in enemys:
             enemy.kill()
         for inimiga in inimigos:

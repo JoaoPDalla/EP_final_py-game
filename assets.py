@@ -23,6 +23,7 @@ V1 = 'Vilão 1'
 INSTRUCOES = 'instrucoes'
 DRINK=pygame.mixer.Sound("assets/sound/gulp_sound.wav")
 OVER = 'Over'
+MORTE_SOM=pygame.mixer.Sound("assets/sound/intro_music.mp3")
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
     for linha in range(linhas):
