@@ -27,7 +27,6 @@ class Mago(pygame.sprite.Sprite):
 
         self.animation_timer = 0
         self.animation_speed = 100  # milissegundos entre troca de sprite
-
     def verifica_escudo(self):
         if self.escudo:
             agora = pygame.time.get_ticks()
@@ -255,20 +254,37 @@ class DragaoInimigo(inimigo):
 
         # Sprites de animação
         self.sprites_parado = assets[BOSSP]
+        self.sprites_andando = assets[BOSSR]
         self.sprites_atacando = assets[BOSSA]
         self.sprites_dano = assets[BOSSD]
 
-        # Animação
+        # Exemplo visual
+        for spr in self.sprites_parado:
+            spr.fill((255, 100, 100))
+        for spr in self.sprites_andando:
+            spr.fill((255, 0, 0))
+        for spr in self.sprites_atacando:
+            spr.fill((255, 0, 100))
+        for spr in self.sprites_dano:
+            spr.fill((255, 255, 0))  # Amarelo para dano
+
         self.estado = 'parado'
         self.frame_index = 0
-        self.anim_timer = pygame.time.get_ticks()
-        self.anim_delay = 150  # tempo entre frames em ms
+        self.anim_timer = 0
+        self.anim_delay = 150
 
         self.dano_timer = 0
         self.tempo_dano = 500  # 0.5 segundo de animação de dano
 
         self.image = self.sprites_parado[0]
-        self.rect = self.image.get_rect(center=(x, y))
+        #self.rect = self.image.get_rect(center=(x, y)).inflate(-300, -260)
+        #self.rect = self.image.get_rect(center=(x, y))
+
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+
+        # Define uma hitbox menor para colisão
+        self.hitbox = self.rect.inflate(-400, -560)  # Ajuste conforme necessário
 
         self.range_ataque = 500
         self.range_perseguicao = 800
@@ -315,6 +331,7 @@ class DragaoInimigo(inimigo):
         if self.estado == 'andando':
             self.rect.x += self.dir_x * self.vel
             self.rect.y += self.dir_y * self.vel
+        self.hitbox.center = self.rect.center 
 
 
     def update_animacao(self):
@@ -330,10 +347,11 @@ class DragaoInimigo(inimigo):
                 self.frame_index = (self.frame_index + 1) % len(self.sprites_estado())
 
         self.image = self.sprites_estado()[self.frame_index]
+        self.hitbox.center = self.rect.center
 
     def sprites_estado(self):
         if self.estado == 'andando':
-            return self.sprites_parado
+            return self.sprites_andando
         elif self.estado == 'atacando':
             return self.sprites_atacando
         elif self.estado == 'dano':
@@ -346,6 +364,8 @@ class DragaoInimigo(inimigo):
         self.estado = 'dano'
         self.frame_index = 0
         self.dano_timer = pygame.time.get_ticks()
+        if self.vida <= 0:
+            self.kill()
 
     def update(self, mago, projeteis, todos_sprites):
         if self.estado != 'dano':

@@ -10,7 +10,7 @@ cooldown_dragao = 1500
 cooldown_ataque_perto = 1000
 ultimo_ataque_perto = 0
 duracao_escudo = 600
-
+music2_duration= 11070
 Primeira_fase = False
 segunda_fase = False
 

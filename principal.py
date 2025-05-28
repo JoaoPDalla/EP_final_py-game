@@ -33,6 +33,7 @@ inimigos = pygame.sprite.Group()
 enemys = pygame.sprite.Group()
 esculdito = pygame.sprite.Group()
 pocs = pygame.sprite.Group()
+boss = pygame.sprite.Group()
 pode_mudar = False
 
 def reposicionar_mago(mago, posicao='esquerda'):
@@ -55,7 +56,10 @@ def atualizar():
         for enemy in enemys:
             enemy.update(mago)
         enemys.draw(TELA)
+        boss.draw(TELA)
         todos_sprites.update()
+        for mige in boss:
+            mige.update(mago,projeteis,todos_sprites)
 
         for inimiga in inimigos:
             inimiga.update(mago, projeteis, todos_sprites)
@@ -91,6 +95,10 @@ def atualizar():
             for enemy in enemys_atacados:
                 enemy.levar_dano(1)  # Aplica 1 de dano
                 proj.kill()
+            for mageee in boss:
+                if mageee.hitbox.colliderect(proj.rect):
+                    mageee.levar_dano(1)
+                    proj.kill()
         # Desenhando as vidas no canto superior esquerdo
         for i in range(barradevida):
             pos_x = 10 + i * (VIDA_PEQUENA.get_width() + 5)  # Espaçamento entre os corações
@@ -115,6 +123,9 @@ while estado != DONE:
                     estado = APRESENTACAO
         # Cutscene inicial
         elif estado == APRESENTACAO:
+            pygame.mixer.music.load("assets/sound/intro_music.mp3")
+            pygame.mixer.music.set_volume(0.8)
+            pygame.mixer.music.play(loops=-1)
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_ESCAPE:
                     estado = DONE
@@ -128,11 +139,17 @@ while estado != DONE:
                 for i in range(1):
                     enemys.add(inimigo(100, 100))
                 for i in range(1):
-                    inimigos.add(DragaoInimigo(300, 300))
+                    magao = DragaoInimigo(300,300)
+                    boss.add(magao)
                 for i in range(1):
                     p = pocao_vida(500,500)
                     pocs.add(p)
                     todos_sprites.add(p)
+                pygame.mixer.music.stop
+                pygame.mixer.music.unload
+                pygame.mixer.music.load("assets/sound/field_music.mp3")
+                pygame.mixer.music.set_volume(0.4)
+                pygame.mixer.music.play(loops=-1)
                 Primeira_fase = True
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button in [1, 3]:
@@ -166,6 +183,11 @@ while estado != DONE:
                 for i in range(2):
                     enemys.add(inimigo(100, 100))
                 segunda_fase = True
+                pygame.mixer.music.stop
+                pygame.mixer.music.unload
+                pygame.mixer.music.load("assets/sound/tower_music.mp3")
+                pygame.mixer.music.set_volume(0.4)
+                pygame.mixer.music.play(loops=-1)
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button in [1, 3]:
                     tipo = evento.button - 1 if evento.button == 1 else 2
