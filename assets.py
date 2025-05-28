@@ -28,6 +28,22 @@ def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
             frames.append(frame)
     return frames
 
+def cortar_spritesheet2(sheet, linhas, colunas):
+    largura_total, altura_total = sheet.get_size()
+    largura = largura_total // colunas
+    altura = altura_total // linhas
+    frames = []
+    for linha in range(linhas):
+        for coluna in range(colunas):
+            x = coluna * largura
+            y = linha * altura
+            frame = sheet.subsurface(pygame.Rect(x, y, largura, altura))
+            frame = pygame.transform.scale(frame, (largura/9, altura/9))
+            frames.append(frame)
+            
+    return frames
+
+
 
 
 def load_assets():
@@ -61,5 +77,8 @@ def load_assets():
 
     assets[POCAO] = pygame.transform.scale(pygame.image.load("assets/img/cura.png"), (40, 40)).convert_alpha()
 
+    rbe = pygame.image.load('assets/img/Raposinha fogo _ lado esquerdo.png').convert_alpha()
+    assets[RBE_ANM] = cortar_spritesheet2(rbe, 5, 2)
+    
     return assets
 
