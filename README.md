@@ -11,4 +11,7 @@ Chatgpt também foi utilizado no auxilio de estruturas pontuais e correção err
 construção do escudo do personagem(60% IA): https://chatgpt.com/c/6834bcf7-e8b8-8004-83ab-0993fb924fe3
 hitbox do dragão(60% IA): https://chatgpt.com/c/68367943-1b9c-800b-8d10-eca7eeeae9a0
 
+Chatgpt também foi utilizado para criação de imagens como inicio e fim de jogo:
+https://chatgpt.com/c/6836fa8e-a0d8-800b-b7cb-d63deddcddb5
+
 

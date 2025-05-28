@@ -72,7 +72,7 @@ def load_assets():
     assets[BDUNGEON] = pygame.transform.scale(pygame.image.load("assets/img/dangeon.png"), (WIDTH, HEIGHT))
     assets[INSTRUCOES] = pygame.transform.scale(pygame.image.load("assets/img/intrucoes.png"), (WIDTH, HEIGHT))
     assets[OVER] = pygame.transform.scale(pygame.image.load("assets/img/Derrota.png"), (WIDTH, HEIGHT))
-    assets[Win] = pygame.transform.scale(pygame.image.load("assets/img/paraben.jpg"), (WIDTH, HEIGHT))
+    assets[Win] = pygame.transform.scale(pygame.image.load("assets/img/paraben.png"), (WIDTH, HEIGHT))
     assets[PRJS]=pygame.mixer.Sound("assets/sound/projectile_sound.wav")
     rbe = []
     
