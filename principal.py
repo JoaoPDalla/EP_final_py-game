@@ -215,6 +215,7 @@ while estado != DONE:
                         esculdito.add(area)
                 #Uso da poção de cura
                 if evento.key == pygame.K_g and qntd_pocoes > 0:
+                    DRINK.play()
                     qntd_pocoes -= 1
                     barradevida +=1
             #Mudança para a próxima fase
@@ -307,6 +308,7 @@ while estado != DONE:
                         projeteis_mago.add(proj)
                 #Uso da poção
                 if evento.key == pygame.K_g and qntd_pocoes > 0:
+                    DRINK.play()
                     qntd_pocoes -= 1
                     barradevida +=1
                 #Ativação do Escudo

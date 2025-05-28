@@ -21,6 +21,7 @@ F1 = 'Poder 1'
 F2 = 'poder 2'
 V1 = 'Vilão 1'
 INSTRUCOES = 'instrucoes'
+DRINK=pygame.mixer.Sound("assets/sound/gulp_sound.wav")
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
     for linha in range(linhas):
