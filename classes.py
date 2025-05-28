@@ -24,7 +24,7 @@ class Mago(pygame.sprite.Sprite):
         self.ultimo_ataque = 0
         self.ultimo_area = 0
         self.escudo = False
-
+        self.projetil_som=pygame.mixer.Sound("assets/sound/projectile_sound.wav")
         self.animation_timer = 0
         self.animation_speed = 100  # milissegundos entre troca de sprite
     def verifica_escudo(self):
@@ -67,6 +67,7 @@ class Mago(pygame.sprite.Sprite):
     def atacar(self, tipo, alvo):
         agora = pygame.time.get_ticks()
         if agora - self.ultimo_ataque >= cooldown_magia_bas:
+            self.projetil_som.play()
             self.ultimo_ataque = agora
             cores = [VERMELHO, VERDE, AMARELO, BRANCO]
 
@@ -168,6 +169,7 @@ class inimigo(pygame.sprite.Sprite):
         self.v_ocioso = 0.4
         self.var_x = random.choice([-self.v_ocioso, 0, self.v_ocioso])
         self.var_y = random.choice([-self.v_ocioso, 0, self.v_ocioso])
+        self.morte=pygame.mixer.Sound("assets/sound/dying_sound.wav")
 
     def update(self, mago):
         dx = mago.rect.centerx - self.rect.centerx
@@ -190,6 +192,7 @@ class inimigo(pygame.sprite.Sprite):
     def levar_dano(self, dano):
         self.vida -= dano
         if self.vida <= 0:
+            self.morte.play()
             self.kill()
     def ataque_melle(self,mago):
         dx = mago.rect.centerx - self.rect.centerx
@@ -254,7 +257,7 @@ class DragaoInimigo(inimigo):
 
         # Sprites de animação
         self.sprites_parado = assets[BOSSP]
-        self.sprites_andando = assets[BOSSR]
+        self.sprites_andando = assets[BOSSA]
         self.sprites_atacando = assets[BOSSA]
         self.sprites_dano = assets[BOSSD]
 
