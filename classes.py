@@ -27,7 +27,6 @@ class Mago(pygame.sprite.Sprite):
 
         self.animation_timer = 0
         self.animation_speed = 100  # milissegundos entre troca de sprite
-
     def verifica_escudo(self):
         if self.escudo:
             agora = pygame.time.get_ticks()
@@ -255,14 +254,24 @@ class DragaoInimigo(inimigo):
 
         # Sprites de animação
         self.sprites_parado = assets[BOSSP]
+        self.sprites_andando = assets[BOSSR]
         self.sprites_atacando = assets[BOSSA]
         self.sprites_dano = assets[BOSSD]
 
-        # Animação
+        # Exemplo visual
+        for spr in self.sprites_parado:
+            spr.fill((255, 100, 100))
+        for spr in self.sprites_andando:
+            spr.fill((255, 0, 0))
+        for spr in self.sprites_atacando:
+            spr.fill((255, 0, 100))
+        for spr in self.sprites_dano:
+            spr.fill((255, 255, 0))  # Amarelo para dano
+
         self.estado = 'parado'
         self.frame_index = 0
-        self.anim_timer = pygame.time.get_ticks()
-        self.anim_delay = 150  # tempo entre frames em ms
+        self.anim_timer = 0
+        self.anim_delay = 150
 
         self.dano_timer = 0
         self.tempo_dano = 500  # 0.5 segundo de animação de dano
@@ -342,7 +351,7 @@ class DragaoInimigo(inimigo):
 
     def sprites_estado(self):
         if self.estado == 'andando':
-            return self.sprites_parado
+            return self.sprites_andando
         elif self.estado == 'atacando':
             return self.sprites_atacando
         elif self.estado == 'dano':
