@@ -128,8 +128,7 @@ while estado != DONE:
                 for i in range(1):
                     enemys.add(inimigo(100, 100))
                 for i in range(1):
-                    mago_do_mal=dragao
-                    inimigos.add(mago_do_mal(100,100))
+                    inimigos.add(DragaoInimigo(300, 300))
                 for i in range(1):
                     p = pocao_vida(500,500)
                     pocs.add(p)
