@@ -29,6 +29,12 @@ Mapa 2 feito com imagem gerada por ia: https://chat.insper.tech/c/feee4ef7-4d5c-
 Função def cortar_spritesheet feito 100% por ia. Ela pega uma imagem cheia de sprites e recorta ela em pedaços e cada pedaço é adicionado dentro de uma lista para ser usada na movimentação do personagem.
 Sistema de animação do boss feito 100% por ia.
 
+As músicas e efeitos sonoros utilizados no jogo foram retirados dos seguintes locais:
+-musica do campo:https://music.youtube.com/watch?v=Jo8pgqc5rNc&si=J2Qkgp4EgIjcatV7
+-música do castelo:https://youtu.be/ai31C3hJXSs?si=X1bb66LJVO5D4XKY
+-efeitos sonoros em geral foram retirados dos sites:
+.https://mixkit.co/free-sound-effects/discover/gulp/
+.https://freesound.org/search/?q=gulp
 
-
+Observação: o nome de cada arquivo representa sua função principal, declarar assets em assets.py, contantes em contes.py e classes em classes.py
 

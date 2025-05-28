@@ -151,9 +151,9 @@ while estado != DONE:
                     estado = DONE
                 elif evento.key == pygame.K_RETURN:
                     estado = TUTORIAL
-        # Tutorial
+        # Área inicial
         elif estado == TUTORIAL:
-            #Adiciona os inimigos do tutorial em posições fixas
+            #Adiciona os inimigos da primeira área, de acordo com a 'sala' que o personagem está.
             if Primeira_fase == False:
                 if rooms==7:
                     for i in range(1):
@@ -240,7 +240,7 @@ while estado != DONE:
                         estado = N1
         #Primeiro nivel da dungeon
         elif estado == N1:
-            #Cria os inimigos do 1 nivel da dungeon
+            #Cria os inimigos de cada 'fase' da dungeon, sendo cada fase uma room.
             if rooms==3:
                 if segunda_fase == False:
                     for i in range(1):
