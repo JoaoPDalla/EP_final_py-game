@@ -16,6 +16,7 @@ APRESENTACAO = 2
 TUTORIAL = 3
 MORRENDO = 4
 N1 = 5
+N2=6
 estado = TELA_INICIAL  # Define estado inicial do jogo
 barradevida = 15
 qntd_pocoes = 0
@@ -136,20 +137,54 @@ while estado != DONE:
         elif estado == TUTORIAL:
             #Adiciona os inimigos do tutorial em posições fixas
             if Primeira_fase == False:
-                for i in range(1):
-                    inimigos.add(longo_alcance(1000, 500))
-                for i in range(1):
-                    enemys.add(inimigo(600, 600))
-                for i in range(1):
-                    p = pocao_vida(500,500)
-                    pocs.add(p)
-                    todos_sprites.add(p)
-                pygame.mixer.music.stop
-                pygame.mixer.music.unload
-                pygame.mixer.music.load("assets/sound/field_music.mp3")
-                pygame.mixer.music.set_volume(0.4)
-                pygame.mixer.music.play(loops=-1)
-                Primeira_fase = True
+                if rooms==4:
+                    for i in range(1):
+                        inimigos.add(longo_alcance(1000, 500))
+                    for i in range(1):
+                        enemys.add(inimigo(600, 600))
+                    for i in range(1):
+                        p = pocao_vida(500,500)
+                        pocs.add(p)
+                        todos_sprites.add(p)
+                    pygame.mixer.music.stop
+                    pygame.mixer.music.unload
+                    pygame.mixer.music.load("assets/sound/field_music.mp3")
+                    pygame.mixer.music.set_volume(0.4)
+                    pygame.mixer.music.play(loops=-1)
+                    Primeira_fase = True
+                elif rooms==3:
+                    if Primeira_fase == False:
+                        for i in range(1):
+                            i1 = inimigo(400,500)
+                            i2 = inimigo(400,400)
+                            i3 = inimigo(400,600)
+                            enemys.add(i1,i2,i3)
+                        Primeira_fase=True   
+                elif rooms==2:
+                    if Primeira_fase==False:
+                        for i in range(1):
+                            l1 = longo_alcance(800,700)
+                            l2 = longo_alcance(950,840)
+                            l3 = longo_alcance(982,450)
+                            l4 = longo_alcance(723,354)
+                            l5 = longo_alcance(943,843)
+                            inimigos.add(l1,l2,l3,l4,l5)
+                        Primeira_fase=True
+                elif rooms==1:
+                    if Primeira_fase == False:
+                        for i in range(1):
+                            i1 = inimigo(400,500)
+                            i2 = inimigo(400,400)
+                            i3 = inimigo(400,600)
+                            enemys.add(i1,i2,i3)
+                        for i in range(1):
+                            l1 = longo_alcance(800,700)
+                            l2 = longo_alcance(950,840)
+                            l3 = longo_alcance(982,450)
+                            l4 = longo_alcance(723,354)
+                            l5 = longo_alcance(943,843)
+                            inimigos.add(l1,l2,l3,l4,l5)
+                        Primeira_fase=True
             #Realiza as ações do personagem como ataque ou uso de consumiveis
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 #Ataque base
@@ -173,30 +208,34 @@ while estado != DONE:
                         todos_sprites.add(area)
                         esculdito.add(area)
                 #Uso da poção de cura
-                if evento.key == pygame.K_g and qntd_pocoes > 0:
+                if evento.key == pygame.K_g and qntd_pocoes >= 0:
                     qntd_pocoes -= 1
                     barradevida +=1
             #Mudança para a próxima fase
             if mago.rect.right >= WIDTH:
                 if len(inimigos) == 0 and len(enemys) == 0:
                     reposicionar_mago(mago, 'esquerda')
-                    estado = N1
+                    if rooms>=1:
+                        Primeira_fase=False
+                        rooms-=1
+                    if rooms==0:
+                        estado = N1
         #Primeiro nivel da dungeon
         elif estado == N1:
             #Cria os inimigos do 1 nivel da dungeon
             if segunda_fase == False:
                 for i in range(1):
-                    l1 = longo_alcance(700,700)
-                    l2 = longo_alcance(750,840)
-                    l3 = longo_alcance(882,450)
-                    l4 = longo_alcance(623,354)
-                    l5 = longo_alcance(843,843)
+                    l1 = longo_alcance(800,700)
+                    l2 = longo_alcance(950,840)
+
                     inimigos.add(l1,l2,l3,l4,l5)
                 for i in range(1):
-                    i1 = inimigo(400,500)
                     i2 = inimigo(400,400)
                     i3 = inimigo(400,600)
                     enemys.add(i1,i2,i3)
+                for i in range(1):
+                    magao = DragaoInimigo(300,300)
+                    boss.add(magao)
                 for i in range(1):
                     p = pocao_vida(800,500)
                     pocs.add(p)
@@ -233,8 +272,8 @@ while estado != DONE:
                     if area:
                         todos_sprites.add(area)
                         esculdito.add(area)
-           
-                        
+
+                            
     # ----- Atualiza estado do jogo
     TELA.fill((0, 0, 0))
     if estado == TELA_INICIAL:
@@ -262,7 +301,6 @@ while estado != DONE:
     elif estado == N1:
         TELA.blit(assets[BDUNGEON], (0, 0))
         atualizar()
-    
     
     # ----- Gera saídas
     pygame.display.update()
