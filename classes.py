@@ -286,6 +286,44 @@ class DragaoInimigo(inimigo):
         self.dir_x = random.choice([-1, 0, 1])
         self.dir_y = random.choice([-1, 0, 1])
 
+    def atualizar_animacao(self):
+        agora = pygame.time.get_ticks()
+        if agora - self.anim_timer >= self.anim_delay:
+            self.anim_timer = agora
+            self.frame_index = (self.frame_index + 1) % 8  # 8 sprites
+
+            if self.estado == 'parado':
+                self.image = self.sprites_parado[self.frame_index]
+            elif self.estado == 'andando':
+                self.image = self.sprites_parado[self.frame_index]
+            elif self.estado == 'atacando':
+                self.image = self.sprites_atacando[self.frame_index]
+            elif self.estado == 'dano':
+                self.image = self.sprites_dano[self.frame_index]
+
+    def update(self, jogador):
+        # Atualiza animação
+        self.atualizar_animacao()
+
+        # Lógica de dano
+        if self.estado == 'dano':
+            if pygame.time.get_ticks() - self.dano_timer > self.tempo_dano:
+                self.estado = 'parado'
+
+        # Exemplo simples de movimentação
+        distancia = math.hypot(jogador.rect.centerx - self.rect.centerx, jogador.rect.centery - self.rect.centery)
+        if distancia <= self.range_perseguicao:
+            self.estado = 'andando'
+            if distancia <= self.range_ataque:
+                self.estado = 'atacando'
+                # Aqui pode colocar lógica de ataque real
+
+        # Movimentação simples aleatória
+        if self.estado == 'andando':
+            self.rect.x += self.dir_x * self.vel
+            self.rect.y += self.dir_y * self.vel
+
+
     def update_animacao(self):
         agora = pygame.time.get_ticks()
 
@@ -369,6 +407,5 @@ class DragaoInimigo(inimigo):
 class pocao_vida(pygame.sprite.Sprite):
     def __init__(self,x,y):
         super().__init__()
-        self.image = pygame.Surface((20,20))
-        self.image.fill((255,0,150))
+        self.image = assets[POCAO]
         self.rect = self.image.get_rect(center=(x, y))

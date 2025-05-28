@@ -12,10 +12,11 @@ VIDA = 'Vida'
 BTUTORIAL = 'Tela Tutorial'
 BDUNGEON = 'Mapa base dungeon'
 RBE_ANM = 'Raposa base esquerdo'
-BOSSR = 'Vilão correndo'
 BOSSP = 'Vilão parado'
 BOSSA = 'Vilão atacando'
 BOSSD = 'Vilão levando dano'
+POCAO = 'Cura'
+
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
     for linha in range(linhas):
@@ -48,9 +49,6 @@ def load_assets():
         rbe.append(img)
     assets[RBE_ANM] = rbe
 
-    bossr = pygame.image.load('assets/img/Run.png').convert_alpha()
-    assets[BOSSR] = cortar_spritesheet(bossr, 200, 200, 1, 8)
-
     bossp = pygame.image.load('assets/img/Idle.png').convert_alpha()
     assets[BOSSP] = cortar_spritesheet(bossp, 250, 250, 1, 8)
 
@@ -59,6 +57,8 @@ def load_assets():
 
     bossd = pygame.image.load('assets/img/Attack2.png').convert_alpha()
     assets[BOSSD] = cortar_spritesheet(bossd, 250, 250, 1, 8)
+
+    assets[POCAO] = pygame.transform.scale(pygame.image.load("assets/img/cura.png"), (40, 40)).convert_alpha()
 
     return assets
 
