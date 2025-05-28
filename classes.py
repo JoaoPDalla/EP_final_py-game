@@ -8,6 +8,7 @@ from constantes import *
 
 pygame.init()
 pygame.mixer.init()
+assets = load_assets()
 
 # Classe do Mago
 class Mago(pygame.sprite.Sprite):
@@ -240,54 +241,121 @@ class longo_alcance(inimigo):
 class DragaoInimigo(inimigo):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.image = pygame.Surface((50, 50))
-        self.image.fill((255, 0, 100))  # Rosa avermelhado para o dragão
+
+        # Sprites de animação
+        self.sprites_parado = assets[BOSSP]
+        self.sprites_andando = assets[BOSSR]
+        self.sprites_atacando = assets[BOSSA]
+        self.sprites_dano = assets[BOSSD]
+
+        # Exemplo visual
+        for spr in self.sprites_parado:
+            spr.fill((255, 100, 100))
+        for spr in self.sprites_andando:
+            spr.fill((255, 0, 0))
+        for spr in self.sprites_atacando:
+            spr.fill((255, 0, 100))
+        for spr in self.sprites_dano:
+            spr.fill((255, 255, 0))  # Amarelo para dano
+
+        self.estado = 'parado'
+        self.frame_index = 0
+        self.anim_timer = 0
+        self.anim_delay = 150
+
+        self.dano_timer = 0
+        self.tempo_dano = 500  # 0.5 segundo de animação de dano
+
+        self.image = self.sprites_parado[0]
         self.range_ataque = 500
         self.range_perseguicao = 800
-        self.vida = 10  # Vida inicial maior para o dragão
+        self.vida = 10
         self.vel = 1.5
         self.ultimo_ataque = 0
         self.movimento_aleatorio = 0
         self.dir_x = random.choice([-1, 0, 1])
         self.dir_y = random.choice([-1, 0, 1])
 
-    def update(self, mago, projeteis, todos_sprites):
-        dx = mago.rect.centerx - self.rect.centerx
-        dy = mago.rect.centery - self.rect.centery
-        distancia = math.hypot(dx, dy)
-        if distancia <= self.range_ataque:
-            agora = pygame.time.get_ticks()
-            if agora - self.ultimo_ataque >= cooldown_dragao:
-                self.ultimo_ataque = agora
-                angulo_central = math.atan2(dy, dx)
-                abertura_cone = math.radians(60)  # Cone de disparo de 60 graus
-                num_projeteis = 7
+    def update_animacao(self):
+        agora = pygame.time.get_ticks()
 
-                for i in range(num_projeteis):
-                    offset = (i - (num_projeteis - 1) / 2) / (num_projeteis - 1)
-                    angulo = angulo_central + offset * abertura_cone
-
-                    # Calcula posição inicial do projétil, com deslocamento de 50 pixels
-                    deslocamento = 50
-                    x_inicial = self.rect.centerx + deslocamento * math.cos(angulo)
-                    y_inicial = self.rect.centery + deslocamento * math.sin(angulo)
-
-                    proj = ProjetilFogo(x_inicial, y_inicial, angulo)
-                    projeteis.add(proj)
-                    todos_sprites.add(proj)
-        elif distancia <= self.range_perseguicao:
-            angulo = math.atan2(dy, dx)
-            self.rect.x += self.vel * math.cos(angulo)
-            self.rect.y += self.vel * math.sin(angulo)
+        if self.estado == 'dano':
+            if agora - self.dano_timer >= self.tempo_dano:
+                self.estado = 'parado'  # ou andava antes, pode ajustar
+                self.frame_index = 0
         else:
-            self.movimento_aleatorio -= 1
-            if self.movimento_aleatorio <= 0:
-                self.dir_x = random.choice([-1, 0, 1])
-                self.dir_y = random.choice([-1, 0, 1])
-                self.movimento_aleatorio = random.randint(30, 60)
-            self.rect.x += self.dir_x * self.vel
-            self.rect.y += self.dir_y * self.vel
-        self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
+            if agora - self.anim_timer > self.anim_delay:
+                self.anim_timer = agora
+                self.frame_index = (self.frame_index + 1) % len(self.sprites_estado())
+
+        self.image = self.sprites_estado()[self.frame_index]
+
+    def sprites_estado(self):
+        if self.estado == 'andando':
+            return self.sprites_andando
+        elif self.estado == 'atacando':
+            return self.sprites_atacando
+        elif self.estado == 'dano':
+            return self.sprites_dano
+        else:
+            return self.sprites_parado
+
+    def sofrer_dano(self, dano):
+        self.vida -= dano
+        self.estado = 'dano'
+        self.frame_index = 0
+        self.dano_timer = pygame.time.get_ticks()
+
+    def update(self, mago, projeteis, todos_sprites):
+        if self.estado != 'dano':
+            dx = mago.rect.centerx - self.rect.centerx
+            dy = mago.rect.centery - self.rect.centery
+            distancia = math.hypot(dx, dy)
+
+            if distancia <= self.range_ataque:
+                self.estado = 'atacando'
+                agora = pygame.time.get_ticks()
+                if agora - self.ultimo_ataque >= cooldown_dragao:
+                    self.ultimo_ataque = agora
+                    angulo_central = math.atan2(dy, dx)
+                    abertura_cone = math.radians(60)
+                    num_projeteis = 7
+
+                    for i in range(num_projeteis):
+                        offset = (i - (num_projeteis - 1) / 2) / (num_projeteis - 1)
+                        angulo = angulo_central + offset * abertura_cone
+
+                        deslocamento = 50
+                        x_inicial = self.rect.centerx + deslocamento * math.cos(angulo)
+                        y_inicial = self.rect.centery + deslocamento * math.sin(angulo)
+
+                        proj = ProjetilFogo(x_inicial, y_inicial, angulo)
+                        projeteis.add(proj)
+                        todos_sprites.add(proj)
+
+            elif distancia <= self.range_perseguicao:
+                self.estado = 'andando'
+                angulo = math.atan2(dy, dx)
+                self.rect.x += self.vel * math.cos(angulo)
+                self.rect.y += self.vel * math.sin(angulo)
+            else:
+                self.estado = 'andando'
+                self.movimento_aleatorio -= 1
+                if self.movimento_aleatorio <= 0:
+                    self.dir_x = random.choice([-1, 0, 1])
+                    self.dir_y = random.choice([-1, 0, 1])
+                    self.movimento_aleatorio = random.randint(30, 60)
+                self.rect.x += self.dir_x * self.vel
+                self.rect.y += self.dir_y * self.vel
+
+            if self.dir_x == 0 and self.dir_y == 0 and distancia > self.range_ataque:
+                self.estado = 'parado'
+
+            self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
+
+        self.update_animacao()
+
+
 class pocao_vida(pygame.sprite.Sprite):
     def __init__(self,x,y):
         super().__init__()
