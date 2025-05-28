@@ -22,6 +22,7 @@ class Mago(pygame.sprite.Sprite):
 
         self.vel = 8
         self.ultimo_ataque = 0
+        self.ultimo_super = 0
         self.ultimo_area = 0
         self.escudo = False
         self.projetil_som=pygame.mixer.Sound("assets/sound/projectile_sound.wav")
@@ -93,6 +94,27 @@ class Mago(pygame.sprite.Sprite):
             self.escudo = True
             return Especial(self)
         return None
+    def super(self,projeteis_mago,todos_sprites,alvo):
+        agora = pygame.time.get_ticks()
+        if agora - self.ultimo_super >= cooldown_super:
+            self.ultimo_super = agora
+            dx, dy = alvo[0] - self.rect.centerx, alvo[1] - self.rect.centery
+            angulo_central = math.atan2(dy, dx)
+            abertura_cone = math.radians(60)
+            num_projeteis = 3
+
+            for i in range(num_projeteis):
+                offset = (i - (num_projeteis - 1) / 2) / (num_projeteis - 1)
+                angulo = angulo_central + offset * abertura_cone
+
+                deslocamento = 50
+                x_inicial = self.rect.centerx + deslocamento * math.cos(angulo)
+                y_inicial = self.rect.centery + deslocamento * math.sin(angulo)
+                alvo_x = x_inicial + math.cos(angulo) * 100
+                alvo_y = y_inicial + math.sin(angulo) * 100
+                proj = Projetil(x_inicial, y_inicial, (alvo_x, alvo_y), VERDE)
+                projeteis_mago.add(proj)
+                todos_sprites.add(proj)
 class Especial(pygame.sprite.Sprite):
     def __init__(self, mago):
         super().__init__()
