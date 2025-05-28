@@ -18,6 +18,7 @@ MORRENDO = 4
 INSTR = 7
 N1 = 5
 N2=6
+Defeat = 8
 estado = TELA_INICIAL  # Define estado inicial do jogo
 barradevida = 15
 qntd_pocoes = 0
@@ -54,7 +55,7 @@ def reposicionar_mago(mago, posicao='esquerda'):
         mago.rect.topleft = posicao
 def atualizar():
         #adota variaveis como globais
-        global barradevida, ultimo_ataque_perto,qntd_pocoes
+        global barradevida, ultimo_ataque_perto,qntd_pocoes, estado
         
         #Realiza os movimentos do mago
         teclas = pygame.key.get_pressed()
@@ -79,17 +80,26 @@ def atualizar():
         dano_mago = pygame.sprite.spritecollide(mago, projeteis, True)
         if len(dano_mago) > 0 and mago.verifica_escudo() == False:
             barradevida -= 1
+            if barradevida <= 0:
+                estado = Defeat
+                mago.kill()
         # Verifica colisão corpo a corpo entre mago e inimigos
         colisao_com_inimigos = pygame.sprite.spritecollide(mago, inimigos, False)
         for enemy in enemys:
             if enemy.ataque_melle(mago):
                 if not mago.verifica_escudo():
                     barradevida -=1
+                    if barradevida <= 0:
+                        estado = Defeat
+                        mago.kill()
         if len(colisao_com_inimigos) > 0 and mago.verifica_escudo() == False:
             now = pygame.time.get_ticks()
             if now - ultimo_ataque_perto > cooldown_ataque_perto:
                 ultimo_ataque_perto = pygame.time.get_ticks()
                 barradevida -= 1  # Reduz vida do mago
+                if barradevida <= 0:
+                    estado = Defeat
+                    mago.kill()
         # Verifica colisão entre projéteis e inimigos
         for proj in projeteis_mago:
             inimigos_atacados = pygame.sprite.spritecollide(proj, inimigos, False)
@@ -354,6 +364,12 @@ while estado != DONE:
     elif estado == N1:
         TELA.blit(assets[BDUNGEON], (0, 0))
         atualizar()
+    elif estado == Defeat:
+        TELA.blit(assets[OVER],(0,0))
+        for enemy in enemys:
+            enemy.kill()
+        for inimiga in inimigos:
+            inimiga.kill()
     
     # ----- Gera saídas
     pygame.display.update()

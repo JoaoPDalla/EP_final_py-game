@@ -21,6 +21,7 @@ F1 = 'Poder 1'
 F2 = 'poder 2'
 V1 = 'Vilão 1'
 INSTRUCOES = 'instrucoes'
+OVER = 'Over'
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
     for linha in range(linhas):
@@ -63,6 +64,7 @@ def load_assets():
     assets[BTUTORIAL] = pygame.transform.scale(pygame.image.load("assets/img/Mapa Tutorial.png"), (WIDTH, HEIGHT))
     assets[BDUNGEON] = pygame.transform.scale(pygame.image.load("assets/img/dangeon.png"), (WIDTH, HEIGHT))
     assets[INSTRUCOES] = pygame.transform.scale(pygame.image.load("assets/img/intrucoes.png"), (WIDTH, HEIGHT))
+    assets[OVER] = pygame.transform.scale(pygame.image.load("assets/img/Derrota.png"), (WIDTH, HEIGHT))
     assets[PRJS]=pygame.mixer.Sound("assets/sound/projectile_sound.wav")
     rbe = []
     
