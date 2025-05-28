@@ -337,7 +337,7 @@ while estado != DONE:
                             segunda_fase=False
                             rooms-=1
                         if rooms==0:
-                            estado = N1
+                            estado = Vitory
                             
     # ----- Atualiza estado do jogo
     TELA.fill((0, 0, 0))
