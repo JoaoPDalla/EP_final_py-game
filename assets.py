@@ -28,6 +28,22 @@ def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
             frames.append(frame)
     return frames
 
+def cortar_spritesheet2(sheet, linhas, colunas):
+    largura_total, altura_total = sheet.get_size()
+    largura = largura_total // colunas
+    altura = altura_total // linhas
+    frames = []
+    for linha in range(linhas):
+        for coluna in range(colunas):
+            x = coluna * largura
+            y = linha * altura
+            frame = sheet.subsurface(pygame.Rect(x, y, largura, altura))
+            frame = pygame.transform.scale(frame, (largura/9, altura/9))
+            frames.append(frame)
+            
+    return frames
+
+
 
 
 def load_assets():
@@ -39,15 +55,6 @@ def load_assets():
     assets[VIDA] = pygame.transform.scale(pygame.image.load("assets/img/ChatGPT_Image_24_de_mai._de_2025__15_00_52-removebg-preview.png"), (WIDTH, HEIGHT))
     assets[BTUTORIAL] = pygame.transform.scale(pygame.image.load("assets/img/Mapa Tutorial.png"), (WIDTH, HEIGHT))
     assets[BDUNGEON] = pygame.transform.scale(pygame.image.load("assets/img/dangeon.png"), (WIDTH, HEIGHT))
-    rbe = []
-    
-    for i in range(1,10):
-        # Os arquivos de animação são numerados de 00 a 08
-        filename = os.path.join('assets/img/Raposinha base _ lado esquerdo{}.png.png'.format(i))
-        img = pygame.image.load(filename).convert_alpha()
-        img = pygame.transform.scale(img, (90, 120))
-        rbe.append(img)
-    assets[RBE_ANM] = rbe
 
     bossp = pygame.image.load('assets/img/Idle.png').convert_alpha()
     assets[BOSSP] = cortar_spritesheet(bossp, 250, 250, 1, 8)
@@ -60,5 +67,8 @@ def load_assets():
 
     assets[POCAO] = pygame.transform.scale(pygame.image.load("assets/img/cura.png"), (40, 40)).convert_alpha()
 
+    rbe = pygame.image.load('assets/img/Raposinha fogo _ lado esquerdo.png').convert_alpha()
+    assets[RBE_ANM] = cortar_spritesheet2(rbe, 5, 2)
+    
     return assets
 
