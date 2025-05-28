@@ -70,7 +70,7 @@ class Mago(pygame.sprite.Sprite):
         if agora - self.ultimo_ataque >= cooldown_magia_bas:
             self.projetil_som.play()
             self.ultimo_ataque = agora
-            poderes = [assets[F1], assets[F2], AMARELO, BRANCO]
+            poderes = [assets[F1], assets[F3], assets[F2], assets[F4]]
 
             dx, dy = alvo[0] - self.rect.centerx, alvo[1] - self.rect.centery
             dist = math.hypot(dx, dy)
@@ -112,7 +112,7 @@ class Mago(pygame.sprite.Sprite):
                 y_inicial = self.rect.centery + deslocamento * math.sin(angulo)
                 alvo_x = x_inicial + math.cos(angulo) * 100
                 alvo_y = y_inicial + math.sin(angulo) * 100
-                proj = Projetil(x_inicial, y_inicial, (alvo_x, alvo_y), VERDE)
+                proj = Projetil(x_inicial, y_inicial, (alvo_x, alvo_y), assets[F4])
                 projeteis_mago.add(proj)
                 todos_sprites.add(proj)
 class Especial(pygame.sprite.Sprite):
@@ -154,8 +154,7 @@ class Projetil(pygame.sprite.Sprite):
 class ProjetilFogo(pygame.sprite.Sprite):
     def __init__(self, x, y, angulo):
         super().__init__()
-        self.image = pygame.Surface((20, 10))
-        self.image.fill((255, 100, 0))  # Cor laranja para projéteis de fogo
+        self.image = assets[F3]
         self.rect = self.image.get_rect(center=(x, y))
         self.vel = 6
 
@@ -266,10 +265,14 @@ class inimigo(pygame.sprite.Sprite):
 class longo_alcance(inimigo):
     def __init__(self, x, y):
         super().__init__(x, y)  # Chama o construtor da classe base
-        self.image = pygame.Surface((30, 30))
-        self.image.fill(VERMELHO)
+
+        # Sobrescreve sprites e imagem
+        self.sprites = assets[V2]  # Lista com imagens de animação de longo alcance
+        self.frame = 0
+        self.image = self.sprites[self.frame]
         self.rect = self.image.get_rect(topleft=(x, y))
         self.mask = pygame.mask.from_surface(self.image)
+
         self.range_ataque = 600
         self.range_perseguicao = 900
         self.timer_movimento_aleatorio = 0
@@ -278,28 +281,36 @@ class longo_alcance(inimigo):
         self.dir_y = random.choice([-1, 0, 1])
         self.ultimo_ataque = 0
 
+        # Controle de animação
+        self.last_update = pygame.time.get_ticks()
+        self.frame_rate = 150  # ms entre os frames
+
     def update(self, mago, projeteis, todos_sprites):
         dx = mago.rect.centerx - self.rect.centerx
         dy = mago.rect.centery - self.rect.centery
         distancia = math.hypot(dx, dy)
+
+        movendo = True
+
         if distancia <= self.range_ataque:
             agora = pygame.time.get_ticks()
             if agora - self.ultimo_ataque >= cooldown_inim_longe:
                 self.ultimo_ataque = agora
                 angulo = math.atan2(dy, dx)
 
-                # Calcula posição inicial com deslocamento de 50 pixels
+                # Calcula posição inicial com deslocamento
                 deslocamento = 50
                 x_inicial = self.rect.centerx + deslocamento * math.cos(angulo)
                 y_inicial = self.rect.centery + deslocamento * math.sin(angulo)
 
-                proj = Projetil(x_inicial, y_inicial, mago.rect.center, assets[F1])
+                proj = Projetil(x_inicial, y_inicial, mago.rect.center, assets[F3])
                 projeteis.add(proj)
                 todos_sprites.add(proj)
         elif distancia <= self.range_perseguicao:
             angulo = math.atan2(dy, dx)
             self.rect.x += self.vel * math.cos(angulo)
             self.rect.y += self.vel * math.sin(angulo)
+            movendo = True
         else:
             self.timer_movimento_aleatorio -= 1
             if self.timer_movimento_aleatorio <= 0:
@@ -308,7 +319,28 @@ class longo_alcance(inimigo):
                 self.timer_movimento_aleatorio = random.randint(30, 60)
             self.rect.x += self.dir_x
             self.rect.y += self.dir_y
+            if self.dir_x != 0 or self.dir_y != 0:
+                movendo = True
+
         self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
+
+        # Atualiza a animação apenas se estiver se movendo
+        if movendo:
+            self.atualizar_animacao()
+        else:
+            self.frame = 0
+            self.image = self.sprites[self.frame]
+            self.mask = pygame.mask.from_surface(self.image)
+
+    def atualizar_animacao(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+            self.frame = (self.frame + 1) % len(self.sprites)
+            self.image = self.sprites[self.frame]
+            self.rect = self.image.get_rect(center=self.rect.center)
+            self.mask = pygame.mask.from_surface(self.image)
+
 
 # Classe Dragao Inimigo com vida
 class DragaoInimigo(inimigo):

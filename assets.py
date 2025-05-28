@@ -17,13 +17,13 @@ BOSSA = 'Vilão atacando'
 BOSSD = 'Vilão levando dano'
 POCAO = 'Cura'
 PRJS= 'som do projétil'
-<<<<<<< HEAD
 F1 = 'Poder 1'
 F2 = 'poder 2'
+F3 = 'poder 3'
+F4 = 'poder 4'
 V1 = 'Vilão 1'
-=======
+V2 = 'Vilão 2'
 INSTRUCOES = 'instrucoes'
->>>>>>> e86160484cc989c724e18b2383cb296106e88c1e
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
     for linha in range(linhas):
@@ -93,9 +93,14 @@ def load_assets():
 
     assets[F1] = pygame.transform.scale(pygame.image.load("assets/img/f1.png"), (40, 40))
     assets[F2] = pygame.transform.scale(pygame.image.load("assets/img/f2.png"), (40, 40))
+    assets[F3] = pygame.transform.scale(pygame.image.load("assets/img/f3.png"), (40, 40))
+    assets[F4] = pygame.transform.scale(pygame.image.load("assets/img/f4.png"), (40, 40))
 
     v1 = pygame.image.load('assets/img/vp.png').convert_alpha()
     assets[V1] = cortar_spritesheet2(v1, 4, 4,'A')
+
+    v2 = pygame.image.load('assets/img/vl.png').convert_alpha()
+    assets[V2] = cortar_spritesheet2(v2, 1, 6,'A')
 
     
     return assets
