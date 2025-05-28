@@ -27,6 +27,7 @@ INSTRUCOES = 'instrucoes'
 INSTRUCOES = 'instrucoes'
 DRINK=pygame.mixer.Sound("assets/sound/gulp_sound.wav")
 OVER = 'Over'
+Win = 'win'
 MORTE_SOM=pygame.mixer.Sound("assets/sound/intro_music.mp3")
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
@@ -71,6 +72,7 @@ def load_assets():
     assets[BDUNGEON] = pygame.transform.scale(pygame.image.load("assets/img/dangeon.png"), (WIDTH, HEIGHT))
     assets[INSTRUCOES] = pygame.transform.scale(pygame.image.load("assets/img/intrucoes.png"), (WIDTH, HEIGHT))
     assets[OVER] = pygame.transform.scale(pygame.image.load("assets/img/Derrota.png"), (WIDTH, HEIGHT))
+    assets[Win] = pygame.transform.scale(pygame.image.load("assets/img/paraben.jpg"), (WIDTH, HEIGHT))
     assets[PRJS]=pygame.mixer.Sound("assets/sound/projectile_sound.wav")
     rbe = []
     

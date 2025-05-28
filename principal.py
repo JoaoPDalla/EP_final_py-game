@@ -19,6 +19,7 @@ INSTR = 7
 N1 = 5
 N2=6
 Defeat = 8
+Vitory = 9
 estado = TELA_INICIAL  # Define estado inicial do jogo
 barradevida = 15
 qntd_pocoes = 0
@@ -300,6 +301,8 @@ while estado != DONE:
                         magao = DragaoInimigo(1500,800)
                         boss.add(magao)
                     segunda_fase=True
+                    if len(inimigos) == 0 and  len(enemys) == 0:
+                        estado = Vitory
             #Realiza as ações do personagem como ataque ou uso de consumiveis
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 #ataque base
@@ -374,6 +377,9 @@ while estado != DONE:
             enemy.kill()
         for inimiga in inimigos:
             inimiga.kill()
+    elif estado == Vitory:
+        TELA.blit(assets[Win],(0,0))
+        mago.kill()
     
     # ----- Gera saídas
     pygame.display.update()
