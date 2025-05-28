@@ -179,6 +179,9 @@ while estado != DONE:
                     if proj:
                         todos_sprites.add(proj)
                         projeteis_mago.add(proj)
+                    if evento.key == pygame.K_g and qntd_pocoes > 0:
+                        qntd_pocoes -= 1
+                        barradevida +=1
                 if evento.key == pygame.K_c:
                     area = mago.especial()
                     if area:

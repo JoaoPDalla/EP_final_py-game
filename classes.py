@@ -208,6 +208,7 @@ class longo_alcance(inimigo):
         super().__init__(x, y)  # Chama o construtor da classe base
         self.image = pygame.Surface((30, 30))
         self.image.fill(VERMELHO)
+        self.vida = 2
         self.range_ataque = 600
         self.range_perseguicao = 900
         self.timer_movimento_aleatorio = 0
@@ -268,7 +269,8 @@ class DragaoInimigo(inimigo):
         self.tempo_dano = 500  # 0.5 segundo de animação de dano
 
         self.image = self.sprites_parado[0]
-        self.rect = self.image.get_rect(center=(x, y))
+        self.rect = self.image.get_rect(center=(x, y)).inflate(-300, -260)
+        #self.rect = self.image.get_rect(center=(x, y))
 
         self.range_ataque = 500
         self.range_perseguicao = 800
@@ -293,11 +295,6 @@ class DragaoInimigo(inimigo):
                 self.image = self.sprites_atacando[self.frame_index]
             elif self.estado == 'dano':
                 self.image = self.sprites_dano[self.frame_index]
-
-    def levar_dano(self, dano):
-        self.vida -= dano
-        self.estado = 'dano'
-        self.dano_timer = pygame.time.get_ticks()
 
     def update(self, jogador):
         # Atualiza animação
@@ -351,6 +348,8 @@ class DragaoInimigo(inimigo):
         self.estado = 'dano'
         self.frame_index = 0
         self.dano_timer = pygame.time.get_ticks()
+        if self.vida <= 0:
+            self.kill()
 
     def update(self, mago, projeteis, todos_sprites):
         if self.estado != 'dano':
