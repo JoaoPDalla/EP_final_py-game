@@ -22,6 +22,7 @@ class Mago(pygame.sprite.Sprite):
 
         self.vel = 8
         self.ultimo_ataque = 0
+        self.ultimo_super = 0
         self.ultimo_area = 0
         self.escudo = False
         self.projetil_som=pygame.mixer.Sound("assets/sound/projectile_sound.wav")
@@ -93,6 +94,27 @@ class Mago(pygame.sprite.Sprite):
             self.escudo = True
             return Especial(self)
         return None
+    def super(self,projeteis_mago,todos_sprites,alvo):
+        agora = pygame.time.get_ticks()
+        if agora - self.ultimo_super >= cooldown_super:
+            self.ultimo_super = agora
+            dx, dy = alvo[0] - self.rect.centerx, alvo[1] - self.rect.centery
+            angulo_central = math.atan2(dy, dx)
+            abertura_cone = math.radians(60)
+            num_projeteis = 3
+
+            for i in range(num_projeteis):
+                offset = (i - (num_projeteis - 1) / 2) / (num_projeteis - 1)
+                angulo = angulo_central + offset * abertura_cone
+
+                deslocamento = 50
+                x_inicial = self.rect.centerx + deslocamento * math.cos(angulo)
+                y_inicial = self.rect.centery + deslocamento * math.sin(angulo)
+                alvo_x = x_inicial + math.cos(angulo) * 100
+                alvo_y = y_inicial + math.sin(angulo) * 100
+                proj = Projetil(x_inicial, y_inicial, (alvo_x, alvo_y), VERDE)
+                projeteis_mago.add(proj)
+                todos_sprites.add(proj)
 class Especial(pygame.sprite.Sprite):
     def __init__(self, mago):
         super().__init__()
@@ -189,14 +211,18 @@ class inimigo(pygame.sprite.Sprite):
                 self.cooldown_movimento = 100
         self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
     
+    #Funcao para levar dano
     def levar_dano(self, dano):
         self.vida -= dano
         if self.vida <= 0:
             self.morte.play()
             self.kill()
+    #Função para o ataque corpo a corpo
     def ataque_melle(self,mago):
+        #calcula a distancia
         dx = mago.rect.centerx - self.rect.centerx
         dy = mago.rect.centery - self.rect.centery
+        #se a distancia até o mago for menor ou igual o range o golpe é efetuado e é retornado True caso contrario False
         if math.hypot(dx,dy) <= self.range_melle:
             agora = pygame.time.get_ticks()
             if agora-self.ultimo_ataque_melle >= cooldown_ataque_perto:
@@ -270,14 +296,12 @@ class DragaoInimigo(inimigo):
         self.tempo_dano = 500  # 0.5 segundo de animação de dano
 
         self.image = self.sprites_parado[0]
-        #self.rect = self.image.get_rect(center=(x, y)).inflate(-300, -260)
-        #self.rect = self.image.get_rect(center=(x, y))
 
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
         # Define uma hitbox menor para colisão
-        self.hitbox = self.rect.inflate(-400, -560)  # Ajuste conforme necessário
+        self.hitbox = self.rect.inflate(-400, -560) 
 
         self.range_ataque = 500
         self.range_perseguicao = 800
@@ -410,7 +434,7 @@ class DragaoInimigo(inimigo):
 
         self.update_animacao()
 
-
+#Classe da poção de vida
 class pocao_vida(pygame.sprite.Sprite):
     def __init__(self,x,y):
         super().__init__()
