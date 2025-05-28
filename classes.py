@@ -69,7 +69,7 @@ class Mago(pygame.sprite.Sprite):
         if agora - self.ultimo_ataque >= cooldown_magia_bas:
             self.projetil_som.play()
             self.ultimo_ataque = agora
-            cores = [VERMELHO, VERDE, AMARELO, BRANCO]
+            poderes = [assets[F1], assets[F2], AMARELO, BRANCO]
 
             dx, dy = alvo[0] - self.rect.centerx, alvo[1] - self.rect.centery
             dist = math.hypot(dx, dy)
@@ -82,7 +82,7 @@ class Mago(pygame.sprite.Sprite):
                 self.rect.centerx + offset_x,
                 self.rect.centery + offset_y,
                 alvo,
-                cores[tipo]
+                poderes[tipo]
             )
         return None
 
@@ -111,10 +111,9 @@ class Especial(pygame.sprite.Sprite):
 
 # Classe Projetil
 class Projetil(pygame.sprite.Sprite):
-    def __init__(self, x, y, alvo, cor):
+    def __init__(self, x, y, alvo, poder):
         super().__init__()
-        self.image = pygame.Surface((10, 10))
-        self.image.fill(cor)
+        self.image = poder
         self.rect = self.image.get_rect(center=(x, y))
         dx, dy = alvo[0] - x, alvo[1] - y
         dist = math.hypot(dx, dy)
@@ -157,9 +156,18 @@ class ProjetilFogo(pygame.sprite.Sprite):
 class inimigo(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.Surface((40, 60))
-        self.image.fill(VERMELHO)
-        self.rect = self.image.get_rect(center=(x, y))
+        
+        self.sprites = assets[V1]  # Lista com as imagens de animação
+        self.frame = 0
+        self.image = self.sprites[self.frame]  # Começa com a primeira imagem
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.mask = pygame.mask.from_surface(self.image)
+
+        
+        # Controle de animação
+        self.last_update = pygame.time.get_ticks()
+        self.frame_rate = 150  # Tempo em ms entre os frames
+
         self.vida = 3  # Vida inicial
         self.vel = 2
         self.aggro_range = 500
@@ -169,44 +177,68 @@ class inimigo(pygame.sprite.Sprite):
         self.v_ocioso = 0.4
         self.var_x = random.choice([-self.v_ocioso, 0, self.v_ocioso])
         self.var_y = random.choice([-self.v_ocioso, 0, self.v_ocioso])
-        self.morte=pygame.mixer.Sound("assets/sound/dying_sound.wav")
+        self.morte = pygame.mixer.Sound("assets/sound/dying_sound.wav")
 
     def update(self, mago):
         dx = mago.rect.centerx - self.rect.centerx
         dy = mago.rect.centery - self.rect.centery
-        if math.hypot(dx, dy) <= self.aggro_range and math.hypot(dx,dy) >= self.range_melle:
+        distancia = math.hypot(dx, dy)
+        
+        movendo = False
+        
+        if distancia <= self.aggro_range and distancia >= self.range_melle:
             angulo = math.atan2(dy, dx)
             self.rect.x += self.vel * math.cos(angulo)
             self.rect.y += self.vel * math.sin(angulo)
-        elif math.hypot(dx,dy) >= self.range_melle:
+            movendo = True
+        elif distancia >= self.range_melle:
             if self.cooldown_movimento > 0:
                 self.rect.x += self.vel * self.var_x
                 self.rect.y += self.vel * self.var_y
                 self.cooldown_movimento -= 1
+                movendo = False
             else:
                 self.var_x = random.choice([-self.v_ocioso, 0, self.v_ocioso])
                 self.var_y = random.choice([-self.v_ocioso, 0, self.v_ocioso])
                 self.cooldown_movimento = 100
+                movendo = True
+        
         self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
+
+        # Atualiza a animação apenas se estiver se movendo
+        if movendo:
+            self.atualizar_animacao()
+        else:
+            self.frame = 0
+            self.image = self.sprites[self.frame]
+
+    def atualizar_animacao(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+            self.frame = (self.frame + 1) % len(self.sprites)
+            self.image = self.sprites[self.frame]
+            self.image = self.sprites[self.frame]
+            self.rect = self.image.get_rect(center=self.rect.center)
+            self.mask = pygame.mask.from_surface(self.image)
+
     
-    #Funcao para levar dano
     def levar_dano(self, dano):
         self.vida -= dano
         if self.vida <= 0:
             self.morte.play()
             self.kill()
-    #Função para o ataque corpo a corpo
-    def ataque_melle(self,mago):
-        #calcula a distancia
+
+    def ataque_melle(self, mago):
         dx = mago.rect.centerx - self.rect.centerx
         dy = mago.rect.centery - self.rect.centery
-        #se a distancia até o mago for menor ou igual o range o golpe é efetuado e é retornado True caso contrario False
-        if math.hypot(dx,dy) <= self.range_melle:
+        if math.hypot(dx, dy) <= self.range_melle:
             agora = pygame.time.get_ticks()
-            if agora-self.ultimo_ataque_melle >= cooldown_ataque_perto:
+            if agora - self.ultimo_ataque_melle >= cooldown_ataque_perto:
                 self.ultimo_ataque_melle = agora
                 return True
         return False
+
 
 # Classe longo alcance
 class longo_alcance(inimigo):
@@ -214,6 +246,8 @@ class longo_alcance(inimigo):
         super().__init__(x, y)  # Chama o construtor da classe base
         self.image = pygame.Surface((30, 30))
         self.image.fill(VERMELHO)
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.mask = pygame.mask.from_surface(self.image)
         self.range_ataque = 600
         self.range_perseguicao = 900
         self.timer_movimento_aleatorio = 0
@@ -237,7 +271,7 @@ class longo_alcance(inimigo):
                 x_inicial = self.rect.centerx + deslocamento * math.cos(angulo)
                 y_inicial = self.rect.centery + deslocamento * math.sin(angulo)
 
-                proj = Projetil(x_inicial, y_inicial, mago.rect.center, ROXO)
+                proj = Projetil(x_inicial, y_inicial, mago.rect.center, assets[F1])
                 projeteis.add(proj)
                 todos_sprites.add(proj)
         elif distancia <= self.range_perseguicao:

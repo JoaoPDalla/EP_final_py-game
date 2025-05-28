@@ -17,6 +17,9 @@ BOSSA = 'Vilão atacando'
 BOSSD = 'Vilão levando dano'
 POCAO = 'Cura'
 PRJS= 'som do projétil'
+F1 = 'Poder 1'
+F2 = 'poder 2'
+V1 = 'Vilão 1'
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
     for linha in range(linhas):
@@ -28,7 +31,7 @@ def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
             frames.append(frame)
     return frames
 
-def cortar_spritesheet2(sheet, linhas, colunas):
+def cortar_spritesheet2(sheet, linhas, colunas,diminuir):
     largura_total, altura_total = sheet.get_size()
     largura = largura_total // colunas
     altura = altura_total // linhas
@@ -38,7 +41,10 @@ def cortar_spritesheet2(sheet, linhas, colunas):
             x = coluna * largura
             y = linha * altura
             frame = sheet.subsurface(pygame.Rect(x, y, largura, altura))
-            frame = pygame.transform.scale(frame, (largura/9, altura/9))
+            if diminuir == True:
+                frame = pygame.transform.scale(frame, (largura/9, altura/9))
+            elif diminuir == 'A':
+                frame = pygame.transform.scale(frame, (220, 340))
             frames.append(frame)
             
     return frames
@@ -78,7 +84,14 @@ def load_assets():
     assets[POCAO] = pygame.transform.scale(pygame.image.load("assets/img/cura.png"), (40, 40)).convert_alpha()
 
     rbe = pygame.image.load('assets/img/Raposinha fogo _ lado esquerdo.png').convert_alpha()
-    assets[RBE_ANM] = cortar_spritesheet2(rbe, 5, 2)
+    assets[RBE_ANM] = cortar_spritesheet2(rbe, 5, 2,True)
+
+    assets[F1] = pygame.transform.scale(pygame.image.load("assets/img/f1.png"), (40, 40))
+    assets[F2] = pygame.transform.scale(pygame.image.load("assets/img/f2.png"), (40, 40))
+
+    v1 = pygame.image.load('assets/img/vp.png').convert_alpha()
+    assets[V1] = cortar_spritesheet2(v1, 4, 4,'A')
+
     
     return assets
 
