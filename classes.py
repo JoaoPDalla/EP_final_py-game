@@ -255,29 +255,21 @@ class DragaoInimigo(inimigo):
 
         # Sprites de animação
         self.sprites_parado = assets[BOSSP]
-        self.sprites_andando = assets[BOSSR]
         self.sprites_atacando = assets[BOSSA]
         self.sprites_dano = assets[BOSSD]
 
-        # Exemplo visual
-        for spr in self.sprites_parado:
-            spr.fill((255, 100, 100))
-        for spr in self.sprites_andando:
-            spr.fill((255, 0, 0))
-        for spr in self.sprites_atacando:
-            spr.fill((255, 0, 100))
-        for spr in self.sprites_dano:
-            spr.fill((255, 255, 0))  # Amarelo para dano
-
+        # Animação
         self.estado = 'parado'
         self.frame_index = 0
-        self.anim_timer = 0
-        self.anim_delay = 150
+        self.anim_timer = pygame.time.get_ticks()
+        self.anim_delay = 150  # tempo entre frames em ms
 
         self.dano_timer = 0
         self.tempo_dano = 500  # 0.5 segundo de animação de dano
 
         self.image = self.sprites_parado[0]
+        self.rect = self.image.get_rect(center=(x, y))
+
         self.range_ataque = 500
         self.range_perseguicao = 800
         self.vida = 10
@@ -286,6 +278,49 @@ class DragaoInimigo(inimigo):
         self.movimento_aleatorio = 0
         self.dir_x = random.choice([-1, 0, 1])
         self.dir_y = random.choice([-1, 0, 1])
+
+    def atualizar_animacao(self):
+        agora = pygame.time.get_ticks()
+        if agora - self.anim_timer >= self.anim_delay:
+            self.anim_timer = agora
+            self.frame_index = (self.frame_index + 1) % 8  # 8 sprites
+
+            if self.estado == 'parado':
+                self.image = self.sprites_parado[self.frame_index]
+            elif self.estado == 'andando':
+                self.image = self.sprites_parado[self.frame_index]
+            elif self.estado == 'atacando':
+                self.image = self.sprites_atacando[self.frame_index]
+            elif self.estado == 'dano':
+                self.image = self.sprites_dano[self.frame_index]
+
+    def levar_dano(self, dano):
+        self.vida -= dano
+        self.estado = 'dano'
+        self.dano_timer = pygame.time.get_ticks()
+
+    def update(self, jogador):
+        # Atualiza animação
+        self.atualizar_animacao()
+
+        # Lógica de dano
+        if self.estado == 'dano':
+            if pygame.time.get_ticks() - self.dano_timer > self.tempo_dano:
+                self.estado = 'parado'
+
+        # Exemplo simples de movimentação
+        distancia = math.hypot(jogador.rect.centerx - self.rect.centerx, jogador.rect.centery - self.rect.centery)
+        if distancia <= self.range_perseguicao:
+            self.estado = 'andando'
+            if distancia <= self.range_ataque:
+                self.estado = 'atacando'
+                # Aqui pode colocar lógica de ataque real
+
+        # Movimentação simples aleatória
+        if self.estado == 'andando':
+            self.rect.x += self.dir_x * self.vel
+            self.rect.y += self.dir_y * self.vel
+
 
     def update_animacao(self):
         agora = pygame.time.get_ticks()
@@ -303,7 +338,7 @@ class DragaoInimigo(inimigo):
 
     def sprites_estado(self):
         if self.estado == 'andando':
-            return self.sprites_andando
+            return self.sprites_parado
         elif self.estado == 'atacando':
             return self.sprites_atacando
         elif self.estado == 'dano':

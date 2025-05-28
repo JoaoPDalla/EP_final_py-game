@@ -24,7 +24,7 @@ def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
             x = coluna * largura
             y = linha * altura
             frame = sheet.subsurface(pygame.Rect(x, y, largura, altura))
-            frame = pygame.transform.scale(frame, (90, 120))
+            frame = pygame.transform.scale(frame, (620, 740))
             frames.append(frame)
     return frames
 
@@ -50,7 +50,7 @@ def load_assets():
     assets[RBE_ANM] = rbe
 
     bossr = pygame.image.load('assets/img/Run.png').convert_alpha()
-    assets[BOSSR] = cortar_spritesheet(bossr, 250, 250, 1, 8)
+    assets[BOSSR] = cortar_spritesheet(bossr, 200, 200, 1, 8)
 
     bossp = pygame.image.load('assets/img/Idle.png').convert_alpha()
     assets[BOSSP] = cortar_spritesheet(bossp, 250, 250, 1, 8)
