@@ -123,9 +123,6 @@ while estado != DONE:
                     estado = APRESENTACAO
         # Cutscene inicial
         elif estado == APRESENTACAO:
-            pygame.mixer.music.load("assets/sound/intro_music.mp3")
-            pygame.mixer.music.set_volume(0.8)
-            pygame.mixer.music.play(loops=-1)
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_ESCAPE:
                     estado = DONE

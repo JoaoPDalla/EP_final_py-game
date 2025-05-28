@@ -287,7 +287,7 @@ class DragaoInimigo(inimigo):
         self.movimento_aleatorio = 0
         self.dir_x = random.choice([-1, 0, 1])
         self.dir_y = random.choice([-1, 0, 1])
-
+        self.morte=pygame.mixer.Sound("assets/sound/explosion_sound.wav")
     def atualizar_animacao(self):
         agora = pygame.time.get_ticks()
         if agora - self.anim_timer >= self.anim_delay:
@@ -358,6 +358,7 @@ class DragaoInimigo(inimigo):
         self.frame_index = 0
         self.dano_timer = pygame.time.get_ticks()
         if self.vida <= 0:
+            self.morte.play()
             self.kill()
 
     def update(self, mago, projeteis, todos_sprites):
