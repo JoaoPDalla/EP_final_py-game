@@ -33,6 +33,7 @@ inimigos = pygame.sprite.Group()
 enemys = pygame.sprite.Group()
 esculdito = pygame.sprite.Group()
 pocs = pygame.sprite.Group()
+boss = pygame.sprite.Group()
 pode_mudar = False
 
 def reposicionar_mago(mago, posicao='esquerda'):
@@ -55,7 +56,10 @@ def atualizar():
         for enemy in enemys:
             enemy.update(mago)
         enemys.draw(TELA)
+        boss.draw(TELA)
         todos_sprites.update()
+        for mige in boss:
+            mige.update(mago,projeteis,todos_sprites)
 
         for inimiga in inimigos:
             inimiga.update(mago, projeteis, todos_sprites)
@@ -91,6 +95,10 @@ def atualizar():
             for enemy in enemys_atacados:
                 enemy.levar_dano(1)  # Aplica 1 de dano
                 proj.kill()
+            for mageee in boss:
+                if mageee.hitbox.colliderect(proj.rect):
+                    mageee.levar_dano(1)
+                    proj.kill()
         # Desenhando as vidas no canto superior esquerdo
         for i in range(barradevida):
             pos_x = 10 + i * (VIDA_PEQUENA.get_width() + 5)  # Espaçamento entre os corações
@@ -128,7 +136,8 @@ while estado != DONE:
                 for i in range(1):
                     enemys.add(inimigo(100, 100))
                 for i in range(1):
-                    inimigos.add(DragaoInimigo(300, 300))
+                    magao = DragaoInimigo(300,300)
+                    boss.add(magao)
                 for i in range(1):
                     p = pocao_vida(500,500)
                     pocs.add(p)
