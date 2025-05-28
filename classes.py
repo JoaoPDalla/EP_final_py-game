@@ -163,7 +163,9 @@ class inimigo(pygame.sprite.Sprite):
         self.vida = 3  # Vida inicial
         self.vel = 2
         self.aggro_range = 500
+        self.ultimo_ataque_melle = 0
         self.cooldown_movimento = 100
+        self.range_melle = 100
         self.v_ocioso = 0.4
         self.var_x = random.choice([-self.v_ocioso, 0, self.v_ocioso])
         self.var_y = random.choice([-self.v_ocioso, 0, self.v_ocioso])
@@ -171,11 +173,11 @@ class inimigo(pygame.sprite.Sprite):
     def update(self, mago):
         dx = mago.rect.centerx - self.rect.centerx
         dy = mago.rect.centery - self.rect.centery
-        if math.hypot(dx, dy) <= self.aggro_range:
+        if math.hypot(dx, dy) <= self.aggro_range and math.hypot(dx,dy) >= self.range_melle:
             angulo = math.atan2(dy, dx)
             self.rect.x += self.vel * math.cos(angulo)
             self.rect.y += self.vel * math.sin(angulo)
-        else:
+        elif math.hypot(dx,dy) >= self.range_melle:
             if self.cooldown_movimento > 0:
                 self.rect.x += self.vel * self.var_x
                 self.rect.y += self.vel * self.var_y
@@ -190,6 +192,15 @@ class inimigo(pygame.sprite.Sprite):
         self.vida -= dano
         if self.vida <= 0:
             self.kill()
+    def ataque_melle(self,mago):
+        dx = mago.rect.centerx - self.rect.centerx
+        dy = mago.rect.centery - self.rect.centery
+        if math.hypot(dx,dy) <= self.range_melle:
+            agora = pygame.time.get_ticks()
+            if agora-self.ultimo_ataque_melle >= cooldown_ataque_perto:
+                self.ultimo_ataque_melle = agora
+                return True
+        return False
 
 # Classe longo alcance
 class longo_alcance(inimigo):

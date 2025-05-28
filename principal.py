@@ -71,8 +71,11 @@ def atualizar():
             barradevida -= 1
         # Verifica colisão corpo a corpo entre mago e inimigos
         colisao_com_inimigos = pygame.sprite.spritecollide(mago, inimigos, False)
-        colisao_com_enemys = pygame.sprite.spritecollide(mago, enemys, False)
-        if len(colisao_com_inimigos) > 0 or len(colisao_com_enemys) > 0 and mago.verifica_escudo() == False:
+        for enemy in enemys:
+            if enemy.ataque_melle(mago):
+                if not mago.verifica_escudo():
+                    barradevida -=1
+        if len(colisao_com_inimigos) > 0 and mago.verifica_escudo() == False:
             now = pygame.time.get_ticks()
             if now - ultimo_ataque_perto > cooldown_ataque_perto:
                 ultimo_ataque_perto = pygame.time.get_ticks()
@@ -150,7 +153,7 @@ while estado != DONE:
                     if area:
                         todos_sprites.add(area)
                         esculdito.add(area)
-                if evento.key == pygame.K_g:
+                if evento.key == pygame.K_g and qntd_pocoes > 0:
                     qntd_pocoes -= 1
                     barradevida +=1
             if mago.rect.right >= WIDTH:

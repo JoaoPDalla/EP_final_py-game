@@ -7,7 +7,7 @@ cooldown_magia_bas = 500
 cooldown_especial = 1500
 cooldown_inim_longe = 1000
 cooldown_dragao = 1500
-cooldown_ataque_perto = 500
+cooldown_ataque_perto = 1000
 ultimo_ataque_perto = 0
 duracao_escudo = 600
 
