@@ -70,7 +70,7 @@ class Mago(pygame.sprite.Sprite):
         if agora - self.ultimo_ataque >= cooldown_magia_bas:
             self.projetil_som.play()
             self.ultimo_ataque = agora
-            poderes = [assets[F1], assets[F2], AMARELO, BRANCO]
+            poderes = [assets[F1], assets[F2], assets[F1], assets[F2]]
 
             dx, dy = alvo[0] - self.rect.centerx, alvo[1] - self.rect.centery
             dist = math.hypot(dx, dy)
@@ -112,7 +112,7 @@ class Mago(pygame.sprite.Sprite):
                 y_inicial = self.rect.centery + deslocamento * math.sin(angulo)
                 alvo_x = x_inicial + math.cos(angulo) * 100
                 alvo_y = y_inicial + math.sin(angulo) * 100
-                proj = Projetil(x_inicial, y_inicial, (alvo_x, alvo_y), VERDE)
+                proj = Projetil(x_inicial, y_inicial, (alvo_x, alvo_y), assets[F2])
                 projeteis_mago.add(proj)
                 todos_sprites.add(proj)
 class Especial(pygame.sprite.Sprite):

@@ -17,13 +17,10 @@ BOSSA = 'Vilão atacando'
 BOSSD = 'Vilão levando dano'
 POCAO = 'Cura'
 PRJS= 'som do projétil'
-<<<<<<< HEAD
 F1 = 'Poder 1'
 F2 = 'poder 2'
 V1 = 'Vilão 1'
-=======
 INSTRUCOES = 'instrucoes'
->>>>>>> e86160484cc989c724e18b2383cb296106e88c1e
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
     for linha in range(linhas):
