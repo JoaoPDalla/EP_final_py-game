@@ -187,13 +187,17 @@ class inimigo(pygame.sprite.Sprite):
                 self.cooldown_movimento = 100
         self.rect.clamp_ip(pygame.Rect(0, 0, WIDTH, HEIGHT))
     
+    #Funcao para levar dano
     def levar_dano(self, dano):
         self.vida -= dano
         if self.vida <= 0:
             self.kill()
+    #Função para o ataque corpo a corpo
     def ataque_melle(self,mago):
+        #calcula a distancia
         dx = mago.rect.centerx - self.rect.centerx
         dy = mago.rect.centery - self.rect.centery
+        #se a distancia até o mago for menor ou igual o range o golpe é efetuado e é retornado True caso contrario False
         if math.hypot(dx,dy) <= self.range_melle:
             agora = pygame.time.get_ticks()
             if agora-self.ultimo_ataque_melle >= cooldown_ataque_perto:
@@ -267,14 +271,12 @@ class DragaoInimigo(inimigo):
         self.tempo_dano = 500  # 0.5 segundo de animação de dano
 
         self.image = self.sprites_parado[0]
-        #self.rect = self.image.get_rect(center=(x, y)).inflate(-300, -260)
-        #self.rect = self.image.get_rect(center=(x, y))
 
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
         # Define uma hitbox menor para colisão
-        self.hitbox = self.rect.inflate(-400, -560)  # Ajuste conforme necessário
+        self.hitbox = self.rect.inflate(-400, -560) 
 
         self.range_ataque = 500
         self.range_perseguicao = 800
@@ -406,7 +408,7 @@ class DragaoInimigo(inimigo):
 
         self.update_animacao()
 
-
+#Classe da poção de vida
 class pocao_vida(pygame.sprite.Sprite):
     def __init__(self,x,y):
         super().__init__()

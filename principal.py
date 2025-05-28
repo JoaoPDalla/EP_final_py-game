@@ -24,8 +24,9 @@ assets = load_assets()
 VIDA_PEQUENA = pygame.transform.scale(assets[VIDA], (60, 60))  # Ajuste o tamanho se quiser
 tempo_apresentacao = pygame.time.get_ticks()  # contador da Cutscene inicial
 relogio = pygame.time.Clock()
+
+#Cria o personagem principal e os grupos necessários
 mago = Mago(0, HEIGHT // 2 - 30, assets)
-dragao = DragaoInimigo(300, 300)
 todos_sprites = pygame.sprite.Group(mago)
 projeteis_mago = pygame.sprite.Group()
 projeteis = pygame.sprite.Group()
@@ -36,6 +37,7 @@ pocs = pygame.sprite.Group()
 boss = pygame.sprite.Group()
 pode_mudar = False
 
+#Funções para otimização do código
 def reposicionar_mago(mago, posicao='esquerda'):
     """Reposiciona o mago dependendo do lado desejado."""
     if posicao == 'esquerda':
@@ -49,20 +51,22 @@ def reposicionar_mago(mago, posicao='esquerda'):
     elif isinstance(posicao, tuple):  # Se quiser passar coordenadas específicas
         mago.rect.topleft = posicao
 def atualizar():
+        #adota variaveis como globais
         global barradevida, ultimo_ataque_perto,qntd_pocoes
         
+        #Realiza os movimentos do mago
         teclas = pygame.key.get_pressed()
         mago.mover(teclas,dt)
+        #Da update nos inimigos e nos objetos e os desenha na tela
         for enemy in enemys:
             enemy.update(mago)
-        enemys.draw(TELA)
-        boss.draw(TELA)
         todos_sprites.update()
         for mige in boss:
             mige.update(mago,projeteis,todos_sprites)
-
         for inimiga in inimigos:
             inimiga.update(mago, projeteis, todos_sprites)
+        enemys.draw(TELA)
+        boss.draw(TELA)
         todos_sprites.draw(TELA)
         inimigos.draw(TELA)
         # Verifica colisão entre mago e poção
@@ -133,14 +137,12 @@ while estado != DONE:
                     estado = TUTORIAL
         # Tutorial
         elif estado == TUTORIAL:
+            #Adiciona os inimigos do tutorial em posições fixas
             if Primeira_fase == False:
                 for i in range(1):
-                    inimigos.add(longo_alcance(100, 100))
+                    inimigos.add(longo_alcance(1000, 500))
                 for i in range(1):
-                    enemys.add(inimigo(100, 100))
-                for i in range(1):
-                    magao = DragaoInimigo(300,300)
-                    boss.add(magao)
+                    enemys.add(inimigo(600, 600))
                 for i in range(1):
                     p = pocao_vida(500,500)
                     pocs.add(p)
@@ -151,7 +153,9 @@ while estado != DONE:
                 pygame.mixer.music.set_volume(0.4)
                 pygame.mixer.music.play(loops=-1)
                 Primeira_fase = True
+            #Realiza as ações do personagem como ataque ou uso de consumiveis
             if evento.type == pygame.MOUSEBUTTONDOWN:
+                #Ataque base
                 if evento.button in [1, 3]:
                     tipo = evento.button - 1 if evento.button == 1 else 2
                     proj = mago.atacar(tipo, pygame.mouse.get_pos())
@@ -159,36 +163,56 @@ while estado != DONE:
                         todos_sprites.add(proj)
                         projeteis_mago.add(proj)
             if evento.type == pygame.KEYDOWN:
+                #Ataque do espaço
                 if evento.key == pygame.K_SPACE:
                     proj = mago.atacar(3, pygame.mouse.get_pos())
                     if proj:
                         todos_sprites.add(proj)
                         projeteis_mago.add(proj)
+                #Escudo de proteção
                 if evento.key == pygame.K_c:
                     area = mago.especial()
                     if area:
                         todos_sprites.add(area)
                         esculdito.add(area)
+                #Uso da poção de cura
                 if evento.key == pygame.K_g and qntd_pocoes > 0:
                     qntd_pocoes -= 1
                     barradevida +=1
+            #Mudança para a próxima fase
             if mago.rect.right >= WIDTH:
                 if len(inimigos) == 0 and len(enemys) == 0:
                     reposicionar_mago(mago, 'esquerda')
                     estado = N1
+        #Primeiro nivel da dungeon
         elif estado == N1:
+            #Cria os inimigos do 1 nivel da dungeon
             if segunda_fase == False:
-                for i in range(5):
-                    inimigos.add(longo_alcance(100, 100))
-                for i in range(2):
-                    enemys.add(inimigo(100, 100))
+                for i in range(1):
+                    l1 = longo_alcance(700,700)
+                    l2 = longo_alcance(750,840)
+                    l3 = longo_alcance(882,450)
+                    l4 = longo_alcance(623,354)
+                    l5 = longo_alcance(843,843)
+                    inimigos.add(l1,l2,l3,l4,l5)
+                for i in range(1):
+                    i1 = inimigo(400,500)
+                    i2 = inimigo(400,400)
+                    i3 = inimigo(400,600)
+                    enemys.add(i1,i2,i3)
+                for i in range(1):
+                    p = pocao_vida(800,500)
+                    pocs.add(p)
+                    todos_sprites.add(p)
                 segunda_fase = True
                 pygame.mixer.music.stop
                 pygame.mixer.music.unload
                 pygame.mixer.music.load("assets/sound/tower_music.mp3")
                 pygame.mixer.music.set_volume(0.4)
                 pygame.mixer.music.play(loops=-1)
+            #Realiza as ações do personagem como ataque ou uso de consumiveis
             if evento.type == pygame.MOUSEBUTTONDOWN:
+                #ataque base
                 if evento.button in [1, 3]:
                     tipo = evento.button - 1 if evento.button == 1 else 2
                     proj = mago.atacar(tipo, pygame.mouse.get_pos())
@@ -196,14 +220,17 @@ while estado != DONE:
                         todos_sprites.add(proj)
                         projeteis_mago.add(proj)
             if evento.type == pygame.KEYDOWN:
+                #Ataque do espaço
                 if evento.key == pygame.K_SPACE:
                     proj = mago.atacar(3, pygame.mouse.get_pos())
                     if proj:
                         todos_sprites.add(proj)
                         projeteis_mago.add(proj)
-                    if evento.key == pygame.K_g and qntd_pocoes > 0:
-                        qntd_pocoes -= 1
-                        barradevida +=1
+                #Uso da poção
+                if evento.key == pygame.K_g and qntd_pocoes > 0:
+                    qntd_pocoes -= 1
+                    barradevida +=1
+                #Ativação do Escudo
                 if evento.key == pygame.K_c:
                     area = mago.especial()
                     if area:
@@ -229,10 +256,12 @@ while estado != DONE:
         if pygame.time.get_ticks() - tempo_apresentacao > 15000:
             estado = TUTORIAL
     
+    #Atualiza os inimigos no tutorial
     elif estado == TUTORIAL:
         TELA.blit(assets[BTUTORIAL], (0, 0))
         atualizar()
-
+    
+    #Atualiza os inimigos no nivel 1 da dungeon
     elif estado == N1:
         TELA.blit(assets[BDUNGEON], (0, 0))
         atualizar()
