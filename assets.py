@@ -16,7 +16,6 @@ BOSSR = 'Vilão correndo'
 BOSSP = 'Vilão parado'
 BOSSA = 'Vilão atacando'
 BOSSD = 'Vilão levando dano'
-
 def cortar_spritesheet(sheet, largura, altura, linhas, colunas):
     frames = []
     for linha in range(linhas):

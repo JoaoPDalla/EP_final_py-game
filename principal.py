@@ -115,6 +115,9 @@ while estado != DONE:
                     estado = APRESENTACAO
         # Cutscene inicial
         elif estado == APRESENTACAO:
+            pygame.mixer.music.load("assets/sound/intro_music.mp3")
+            pygame.mixer.music.set_volume(0.8)
+            pygame.mixer.music.play(loops=-1)
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_ESCAPE:
                     estado = DONE
@@ -133,6 +136,11 @@ while estado != DONE:
                     p = pocao_vida(500,500)
                     pocs.add(p)
                     todos_sprites.add(p)
+                pygame.mixer.music.stop
+                pygame.mixer.music.unload
+                pygame.mixer.music.load("assets/sound/field_music.mp3")
+                pygame.mixer.music.set_volume(0.4)
+                pygame.mixer.music.play(loops=-1)
                 Primeira_fase = True
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button in [1, 3]:
@@ -166,6 +174,11 @@ while estado != DONE:
                 for i in range(2):
                     enemys.add(inimigo(100, 100))
                 segunda_fase = True
+                pygame.mixer.music.stop
+                pygame.mixer.music.unload
+                pygame.mixer.music.load("assets/sound/tower_music.mp3")
+                pygame.mixer.music.set_volume(0.4)
+                pygame.mixer.music.play(loops=-1)
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if evento.button in [1, 3]:
                     tipo = evento.button - 1 if evento.button == 1 else 2
