@@ -257,19 +257,9 @@ class DragaoInimigo(inimigo):
 
         # Sprites de animação
         self.sprites_parado = assets[BOSSP]
-        self.sprites_andando = assets[BOSSA]
+        self.sprites_andando = assets[BOSSP]
         self.sprites_atacando = assets[BOSSA]
         self.sprites_dano = assets[BOSSD]
-
-        # Exemplo visual
-        for spr in self.sprites_parado:
-            spr.fill((255, 100, 100))
-        for spr in self.sprites_andando:
-            spr.fill((255, 0, 0))
-        for spr in self.sprites_atacando:
-            spr.fill((255, 0, 100))
-        for spr in self.sprites_dano:
-            spr.fill((255, 255, 0))  # Amarelo para dano
 
         self.estado = 'parado'
         self.frame_index = 0
@@ -354,7 +344,7 @@ class DragaoInimigo(inimigo):
 
     def sprites_estado(self):
         if self.estado == 'andando':
-            return self.sprites_andando
+            return self.sprites_parado
         elif self.estado == 'atacando':
             return self.sprites_atacando
         elif self.estado == 'dano':
