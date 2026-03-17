@@ -10,6 +10,11 @@ pygame.init()
 pygame.mixer.init()
 assets = load_assets()
 
+#Sons para nao ficar carregando varias vezes durante
+Som_morte = pygame.mixer.Sound("assets/sound/dying_sound.wav")
+som_explosao = pygame.mixer.Sound("assets/sound/explosion_sound.wav")
+som_projetil = pygame.mixer.Sound("assets/sound/projectile_sound.wav")
+
 # Classe do Mago
 class Mago(pygame.sprite.Sprite):
     def __init__(self, x, y, assets):
@@ -25,8 +30,8 @@ class Mago(pygame.sprite.Sprite):
         self.ultimo_super = 0
         self.ultimo_area = 0
         self.escudo = False
-        self.projetil_som=pygame.mixer.Sound("assets/sound/projectile_sound.wav")
-        self.super_som=pygame.mixer.Sound("assets/sound/explosion_sound.wav")
+        self.projetil_som= som_projetil
+        self.super_som=som_explosao
         self.animation_timer = 0
         self.animation_speed = 100  # milissegundos entre troca de sprite
     def verifica_escudo(self):
@@ -95,7 +100,8 @@ class Mago(pygame.sprite.Sprite):
             self.escudo = True
             return Especial(self)
         return None
-    def super(self,projeteis_mago,todos_sprites,alvo):
+    #renomeada para nao sobreescreve o metodo super
+    def Especial2(self, projeteis_mago, todos_sprites, alvo):
         agora = pygame.time.get_ticks()
         if agora - self.ultimo_super >= cooldown_super:
             self.super_som.play()
@@ -201,7 +207,7 @@ class inimigo(pygame.sprite.Sprite):
         self.v_ocioso = 0.4
         self.var_x = random.choice([-self.v_ocioso, 0, self.v_ocioso])
         self.var_y = random.choice([-self.v_ocioso, 0, self.v_ocioso])
-        self.morte = pygame.mixer.Sound("assets/sound/dying_sound.wav")
+        self.morte = Som_morte
 
     def update(self, mago):
         dx = mago.rect.centerx - self.rect.centerx
@@ -380,7 +386,7 @@ class DragaoInimigo(inimigo):
         self.movimento_aleatorio = 0
         self.dir_x = random.choice([-1, 0, 1])
         self.dir_y = random.choice([-1, 0, 1])
-        self.morte=pygame.mixer.Sound("assets/sound/explosion_sound.wav")
+        self.morte= som_explosao
     def atualizar_animacao(self):
         agora = pygame.time.get_ticks()
         if agora - self.anim_timer >= self.anim_delay:
@@ -395,30 +401,6 @@ class DragaoInimigo(inimigo):
                 self.image = self.sprites_atacando[self.frame_index]
             elif self.estado == 'dano':
                 self.image = self.sprites_dano[self.frame_index]
-
-    def update(self, jogador):
-        # Atualiza animação
-        self.atualizar_animacao()
-
-        # Lógica de dano
-        if self.estado == 'dano':
-            if pygame.time.get_ticks() - self.dano_timer > self.tempo_dano:
-                self.estado = 'parado'
-
-        # Exemplo simples de movimentação
-        distancia = math.hypot(jogador.rect.centerx - self.rect.centerx, jogador.rect.centery - self.rect.centery)
-        if distancia <= self.range_perseguicao:
-            self.estado = 'andando'
-            if distancia <= self.range_ataque:
-                self.estado = 'atacando'
-                # Aqui pode colocar lógica de ataque real
-
-        # Movimentação simples aleatória
-        if self.estado == 'andando':
-            self.rect.x += self.dir_x * self.vel
-            self.rect.y += self.dir_y * self.vel
-        self.hitbox.center = self.rect.center 
-
 
     def update_animacao(self):
         agora = pygame.time.get_ticks()
