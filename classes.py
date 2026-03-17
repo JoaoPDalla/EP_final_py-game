@@ -168,6 +168,9 @@ class ProjetilFogo(pygame.sprite.Sprite):
 
         # Calcula deslocamento inicial baseado no ângulo
         deslocamento = 50  # 50 pixels fora do inimigo
+        self.desloca(angulo, deslocamento)
+
+    def desloca(self, angulo, deslocamento):
         self.rect.x += deslocamento * math.cos(angulo)
         self.rect.y += deslocamento * math.sin(angulo)
 
@@ -178,7 +181,7 @@ class ProjetilFogo(pygame.sprite.Sprite):
         self.rect.x += self.vx
         self.rect.y += self.vy
         if (self.rect.right < 0 or self.rect.left > WIDTH or
-            self.rect.bottom < 0 or self.rect.top > HEIGHT):
+                self.rect.bottom < 0 or self.rect.top > HEIGHT):
             self.kill()
 
 # Classe base para inimigos
