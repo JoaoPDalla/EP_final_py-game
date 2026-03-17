@@ -14,7 +14,6 @@ assets = load_assets()
 Som_morte = pygame.mixer.Sound("assets/sound/dying_sound.wav")
 som_explosao = pygame.mixer.Sound("assets/sound/explosion_sound.wav")
 som_projetil = pygame.mixer.Sound("assets/sound/projectile_sound.wav")
-
 # Classe do Mago
 class Mago(pygame.sprite.Sprite):
     def __init__(self, x, y, assets):
