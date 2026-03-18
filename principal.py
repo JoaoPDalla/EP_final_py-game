@@ -214,7 +214,7 @@ while estado != DONE:
             if evento.type == pygame.KEYDOWN:
                 #Ataque do espaço
                 if evento.key == pygame.K_SPACE:
-                    proj = mago.super(projeteis_mago,todos_sprites,pygame.mouse.get_pos())
+                    proj = mago.Especial2(projeteis_mago, todos_sprites, pygame.mouse.get_pos())
                     if proj:
                         todos_sprites.add(proj)
                         projeteis_mago.add(proj)
@@ -315,7 +315,7 @@ while estado != DONE:
             if evento.type == pygame.KEYDOWN:
                 #Ataque do espaço
                 if evento.key == pygame.K_SPACE:
-                    proj = mago.super(projeteis_mago,todos_sprites,pygame.mouse.get_pos())
+                    proj = mago.Especial2(projeteis_mago, todos_sprites, pygame.mouse.get_pos())
                     if proj:
                         todos_sprites.add(proj)
                         projeteis_mago.add(proj)
